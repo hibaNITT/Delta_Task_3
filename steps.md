@@ -1,1 +1,8 @@
-Day 1 -we laid down the foundational full-stack setup for your DTube application. We initialized your Node.js backend environment by configuring Express.js, setting up CORS for cross-origin resource sharing, and organizing your structural layout routes. We also mapped out your essential environment variables within your .env file to ensure secure token handling right from the start.
+DAY 1 -
+We built the Brain (The Backend): You set up an Express server that sits on your computer listening for commands.
+
+We connected the Memory (The Database): Your server successfully hooked up to MongoDB, meaning our app now has a permanent place to save user accounts, videos, and comments.
+
+We built the Face (The Frontend): You used Vite to spin up a React application, which creates the visual website interface that users actually interact with.
+
+(The Connection): We got the Frontend to shoot a message through space to the Backend, ask "Are you healthy?", and the backend answered "Yes, ok!".
