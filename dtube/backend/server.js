@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
+const videoRoutes = require("./routes/videos");
 
 // Imports Cross-Origin Resource Sharing (CORS). This is a security feature helper; it allows our React frontend which is running on a different port to talk to this
 // backend port without being blocked by the browser.
@@ -18,6 +19,9 @@ app.use(cors()); // Permits communication with our frontend code
 
 // Mounting auth routing
 app.use("/api/auth", authRoutes);
+
+// mounting video routes
+app.use("/api/videos", videoRoutes);
 
 // Connect to MongoDB Database
 mongoose
