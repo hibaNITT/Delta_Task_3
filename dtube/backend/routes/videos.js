@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth"); // Import your gatekeeper
+const isAdmin = require("../middleware/isAdmin"); // Check your filename!
 
 // PUBLIC ROUTE: Anyone can see the feed (No token required)
 // GET http://localhost:5000/api/videos/public-feed
@@ -25,4 +26,14 @@ router.post("/upload", auth, (req, res) => {
   });
 });
 
+// ADMIN ONLY ROUTE: Delete/Moderate any video by its ID
+// DELETE http://localhost:5000/api/videos/moderate/:id
+router.delete("/moderate/:id", auth, isAdmin, (req, res) => {
+  const videoId = req.params.id;
+
+  res.status(200).json({
+    message: `Admin authorization verified successfully! Video ID ${videoId} has been removed by the moderator.`,
+    moderatorId: req.user.userId,
+  });
+});
 module.exports = router;
