@@ -83,3 +83,144 @@ day 4 - Set up standard multipart file handling using multer.
 Protected video modifications via resource ownership checks.
 
 Integrated the custom auroraVideoIndex Linked List data conversion on your public feed across both the backend server and frontend rendering layers.
+
+1. The Media Pipeline (multer)
+   What you did: You configured multer in the backend to act as a file parser.
+
+Why it matters: Express cannot natively read files sent from forms (multipart/form-data). multer intercepts the incoming file, validates that it is a safe video format (.mp4, .mov, etc.), renames it with a unique timestamp to prevent file name collisions, and drops it securely into your backend's uploads/ directory.
+
+2. Secure Video CRUD Operations
+   What you did: You built the API endpoints to create, read, update, and delete video documents in MongoDB.
+
+Why it matters: You implemented strict Resource Authorization checks. For the PUT and DELETE operations, being logged in isn't enough; the server verifies if the req.user.userId matching the decoded JWT matches the video's original uploader ID before executing the query.
+
+3. The Custom Linked List Injection (auroraVideoIndex)
+   What you did: Instead of passing a standard database array down to the client on the public feed endpoint (GET /public-feed), you wrote an array-to-linked-list converter. You then explicitly instantiated it to your mandatory variable constraint name: auroraVideoIndex.
+
+Why it matters: On the frontend (VideoFeed.js), you mastered unpacking this non-standard structure by writing a sequential while(currentHeadNode) traversal loop to flatten the data pointers into state-renderable components.
+
+4. Client-Side Routing & Modular CSS Viewports
+   What you did: You integrated react-router-dom (<Routes>, <Route>, <Link>) inside your Vite frontend layout to establish distinct view states (/, /upload, /auth) without shattering your global AuthProvider context. You also cleanly abstracted your CSS out of raw inline objects directly into App.css.
+
+=======================================================================
+
+SECTION 1: SYSTEM ARCHITECTURE & COMPONENTS
+This application is built using a decoupled Full-Stack architecture, dividing tasks between three separate layers.
+
+1. The Brain (The Backend Engine)
+   What it is: An Express server running on Node.js that manages the application logic and security. It sits on your local machine listening for inbound HTTP requests on network ports (e.g., Port 5000).
+
+How it works: It acts as a gatekeeper. When the user interface requests data (like loading a video or checking system health), the backend evaluates the request, runs database queries, applies security checks, and responds with structured data.
+
+2. The Memory (The Database Layer)
+   What it is: A MongoDB database connected to the Express server using the Mongoose Object Data Modeling (ODM) library.
+
+How it works: Unlike volatile computer memory, MongoDB acts as a permanent storage house for data records. It is configured using local configuration values (e.g., MONGO_URI=mongodb://localhost:27017/dtube). Developers use visual management software like MongoDB Compass to view live database tables, seed initial items, or manually modify data entries (like elevating an account's authorization clearlevel).
+
+3. The Face (The Frontend Interface)
+   What it is: A user-facing web interface built using React and compiled rapidly using a modern frontend build tool called Vite.
+
+How it works: It handles the visual viewport layout that users click and type into. It manages client-side states, processes form inputs, handles document tracking, and renders UI components (like video cards and native browser media players).
+
+4. Inter-Process Communication (The Health Check)
+   What it is: An initial integration test verifying that the Frontend can successfully exchange data with the Backend.
+
+How it works: The React application issues a background network request on launch to the backend endpoint (GET /api/health). The backend responds with a success status string ("status": "ok"), confirming that the network bridge is clear and online.
+
+SECTION 2: HAND-ROLLED AUTHENTICATION & SECURITY GATEKEEPERS
+
+1. The Core Problem: HTTP is Stateless
+   Concept Definition: Statelessness means that every single HTTP request sent from a web browser is treated by the server as an completely isolated event. The server has no native memory; it treats every click, page refresh, or request as if it is coming from a complete stranger.
+
+The Solution: JSON Web Tokens (JWT). Instead of the server remembering who you are, the server hands you a secure "passport" after you log in, and your browser shows that passport to the server on every single subsequent request.
+
+2. The JWT Authentication Lifecycle
+   Step A: Hand-Rolled Registration (POST /api/auth/signup): Collects form data (username, email, password). The backend validates inputs to ensure no duplicate accounts exist. To ensure maximum safety, passwords are encrypted using bcryptjs via bcrypt.hash(password, 10). Plaintext passwords are never saved in the database.
+
+Step B: Token Creation & Identity Verification (POST /api/auth/login): The server finds the account by email and runs bcrypt.compare() to check the password. If true, it generates a long, scrambled cryptographic token via jwt.sign().
+
+Step C: The Cryptographic Passport: This signed JWT token packages specific payload indicators: userId, account role, and an expiration lifespan. To guarantee authenticity, it is signed using a specialized backend environment key: DTUBE_CONSTELLATION_Conspiracy_SECRET. If a malicious actor tries to alter their user ID or role, the signature breaks, and the backend rejects it.
+
+3. Frontend Authentication Architecture
+   The Network Interceptor Framework (api.js): A global helper configuration that acts like a courier. It intercepts every outgoing Axios network call and automatically attaches ("stamps") the JWT token inside the request's HTTP Authorization: Bearer <TOKEN> header. This ensures all future features get authentication automatically.
+
+Global App State (AuthContext): A centralized React Context cloud provider wrapper (AuthProvider) that stores the active user profile data and active session token globally, making it accessible to any component layout.
+
+Session Persistence & Rehydration: When a login is successful, the JWT is saved directly inside the browser's persistent memory space (localStorage). When the app reboots or refreshes, a script pulls the token out of localStorage to restore the session state, ensuring the user is not automatically logged out.
+
+Session Termination (Logout): Because JWTs are stateless, a server-side session cannot be destroyed. Instead, termination happens on the client side: the React application purges the token from localStorage and resets the global AuthContext state to null, immediately revoking access.
+
+Account Recovery Engine: An automated lifecycle configuration that handles forgotten credentials via two specialized endpoints: POST /api/auth/forgot-password and POST /api/auth/reset-password/:token. It updates user records with temporary security keys (resetPasswordToken and resetPasswordExpires) generated natively by Node's built-in Crypto module to issue secure, single-use, 1-hour expiration hex tokens.
+
+4. Backend Authentication Middleware Architecture
+   What is Middleware? Functions that execute sequentially on the backend server after a request is received, but before it hits the final destination endpoint logic. It acts like a security processing line.
+
+The Identity Gatekeeper (auth.js): Intercepts requests, reads the inbound Authorization header bearer string, and validates it using jwt.verify() against the secret key. If valid, it unpacks the payload data and binds it right onto the request data stream (req.user = decoded), then triggers next() to pass control forward. If invalid or missing, it blocks execution and throws a 401 Unauthorized error.
+
+The Permission Lock (isAdmin.js): Sits directly behind the identity gatekeeper to handle Role-Based Access Control. It inspects the newly populated profile object to verify if req.user.role === 'admin'. If the check fails, it immediately triggers a 403 Forbidden rejection, safely keeping administrative routes accessible only to authorized moderators.
+
+SECTION 3: VIDEO DATABASE ARCHITECTURE & MULTIPART MEDIA PIPELINES
+
+1. Database Document Blueprints (Mongoose Schemas)
+   Data is organized inside the database into strict schemas mapping relationships between collections:
+
+User Schema: Tracks basic metadata alongside advanced structural fields (username, email, password, role, isPro membership toggles, memberships arrays for tracking channel IDs joined, and a strikes counter tracking infraction numbers).
+
+Video Schema: Captures tracking properties and state parameters (title, description, videoUrl asset locations, an uploader ID link referencing the User model, likes tracking arrays, viewCount, and an isPremier flag).
+
+Comment Schema: Maps text back to distinct video resources (videoId, userId, text, createdAt).
+
+2. The Multipart Binary Pipeline (multer)
+   The Technical Challenge: Standard HTTP forms send textual data. However, media files like videos require binary uploads, which are transmitted using a heavy payload format called multipart/form-data. Node.js and Express cannot parse this raw binary format on their own.
+
+The Solution: We configure an industry-standard file-parsing middleware framework named multer.
+
+How it operates: Multer intercepts the inbound binary request, filters out unsafe files by reviewing file extensions (allowing only .mp4, .mov, .avi, .mkv), renames the file with a unique timestamp to prevent name collisions, drops the file into a local backend server directory (uploads/), and appends a text string path (/uploads/filename.mp4) directly into req.file so Mongoose can save the file location path inside the video's database document.
+
+3. Resource Authorization vs. Global Authentication
+   The Distinction: Authentication simply means proving who you are (e.g., "I have a valid token, I am logged in"). Authorization means proving you have the permission to modify a specific item.
+
+The Ownership Check Logic: When handling update (PUT) or delete (DELETE) routes, being logged in is not enough. The backend pulls the video record from the database and runs an explicit authorization check:
+
+JavaScript
+video.uploader.toString() === req.user.userId
+If the active user's ID does not match the video creator's ID, the backend aborts the action and responds with an unauthorized status code.
+
+SECTION 4: DATA STRUCTURE CONSTRAINTS & ROUTING VIEWS
+
+1. Custom Linked List Injection (auroraVideoIndex)
+   The Constraint: While databases naturally return query data elements formatted as standard JavaScript arrays, this application implements a custom linked list data structure configuration.
+
+Backend Array Conversion: On the public viewing feed endpoint (GET /api/videos/public-feed), the raw database video results array is processed sequentially through an iterative constructor helper function that converts the collection into a structured Linked List made of sequential nodes. Each node carries its video details object (data) and a directional pointer referencing the next asset (next). This structure is explicitly bound to the mandatory system variable identifier: auroraVideoIndex.
+
+Frontend Traversal Parsing: Because React cannot natively iterate or loop over non-standard pointer objects using traditional methods like .map(), the frontend component (VideoFeed.js) executes a custom sequential pointer traversal tracking loop:
+
+JavaScript
+let currentHeadNode = response.data.auroraVideoIndex;
+while (currentHeadNode) {
+flattenedList.push(currentHeadNode.data);
+currentHeadNode = currentHeadNode.next;
+}
+This walks down the node chain, unpacks the content data records into a flat array structure, and updates the local state to render responsive UI video card elements.
+
+2. Client-Side Page Router Layouts
+   Component Separation: The user interface organizes view layouts into dedicated modular component assets (VideoFeed.js handles public stream grid loops, UploadVideo.js manages file-picker forms, and Navbar.js tracks authentication status links).
+
+Single Page App (SPA) Routing: To navigate across different components without causing full browser page reloads (which would clear our active state memory), we implement react-router-dom routing modules (<Router>, <Routes>, <Route>, <Link>). This binds clean, specific URL display paths (/ for the home feed, /upload for media uploads, and /auth for user login/signup blocks) while preserving our global context state.
+
+Presentation Layer Abstraction: All raw inline styling configurations are completely stripped out of components and centralized inside a clean, structured layout stylesheet stylesheet (App.css), mapping element rendering rules using standard HTML classification styling (className).
+
+PI STUDY SHEET: DEFINITIONS FOR EXPECTED INTERVIEW QUESTIONS
+Q1: What is the difference between a 401 and a 403 HTTP status code?
+401 Unauthorized: The server does not know who you are. Your authentication token is either missing, broken, or expired. You must log in first.
+
+403 Forbidden: The server does know exactly who you are, but you do not have permission to access that resource. For example, a standard user attempting to hit an Admin moderation path or edit another user's video.
+
+Q2: Why use bcryptjs instead of storing standard passwords?
+Storing passwords in plain text is a severe vulnerability. If a database is compromised, every user account is exposed. Bcryptjs uses a cryptographic hashing algorithm to convert plaintext into an irreversible, fixed-length scrambled string. It adds a "salt" (random characters) to protect against brute-force attacks.
+
+Q3: What problem does Multer solve on your backend server?
+Express is designed to parse incoming text strings (JSON data). When a user uploads a video file, it travels as binary data in a multipart/form-data format. Multer catches this binary stream, processes the data, saves the file to disk, and gives us text variables (req.file) we can use in our database logic.
+
+Q4: Why did you implement a Linked List traversal on the public feed?
+To organize video data streams using pointer-based traversal sequences instead of index-bound lookups. The backend constructs a chain of nodes bound to the auroraVideoIndex variable, and the frontend processes this chain using a while loop to flatten data sequentially for UI layout rendering.
