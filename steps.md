@@ -77,3 +77,9 @@ We must use the exact variable name auroraVideoIndex whenever we are dealing wit
 We should prefer a LinkedList implementation where applicable.
 
 Since browsers send file uploads in a specific structure (multipart/form-data) that Express cannot parse on its own, we use an industry-standard helper library called multer. It will capture the video file, name it securely, and save it directly into a local storage folder on our backend server.
+
+day 4 - Set up standard multipart file handling using multer.
+
+Protected video modifications via resource ownership checks.
+
+Integrated the custom auroraVideoIndex Linked List data conversion on your public feed across both the backend server and frontend rendering layers.

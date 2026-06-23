@@ -2,14 +2,132 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import "./App.css"; // <-- Import your stylesheet right here!
+
+// for video features
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import VideoFeed from "./components/VideoFeed";
+import UploadVideo from "./components/UploadVideo";
+
+//login and signup forms
+const AuthPage = ({
+  signupData,
+  handleSignupChange,
+  handleSignupSubmit,
+  signupStatus,
+  loginData,
+  handleLoginChange,
+  handleLoginSubmit,
+  loginStatus,
+}) => {
+  return (
+    <div className="auth-page-wrapper">
+      {/* SIGNUP BOX */}
+      <div className="auth-box">
+        <h3
+          style={{
+            margin: "0 0 15px 0",
+            color: "#ff0000",
+            borderBottom: "1px solid #333",
+            paddingBottom: "10px",
+          }}
+        >
+          Create Account
+        </h3>
+        {signupStatus.message && (
+          <p
+            className="status-message"
+            style={{ color: signupStatus.isError ? "#f44336" : "#4caf50" }}
+          >
+            {signupStatus.message}
+          </p>
+        )}
+        <form onSubmit={handleSignupSubmit} className="auth-box-form">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={signupData.username}
+            onChange={handleSignupChange}
+            required
+            className="auth-box-input"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={signupData.email}
+            onChange={handleSignupChange}
+            required
+            className="auth-box-input"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={signupData.password}
+            onChange={handleSignupChange}
+            required
+            className="auth-box-input"
+          />
+          <button type="submit" className="btn-signup">
+            Sign Up
+          </button>
+        </form>
+      </div>
+
+      {/* LOGIN BOX */}
+      <div className="auth-box">
+        <h3
+          style={{
+            margin: "0 0 15px 0",
+            color: "#4caf50",
+            borderBottom: "1px solid #333",
+            paddingBottom: "10px",
+          }}
+        >
+          Sign In
+        </h3>
+        {loginStatus.message && (
+          <p
+            className="status-message"
+            style={{ color: loginStatus.isError ? "#f44336" : "#4caf50" }}
+          >
+            {loginStatus.message}
+          </p>
+        )}
+        <form onSubmit={handleLoginSubmit} className="auth-box-form">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={loginData.email}
+            onChange={handleLoginChange}
+            required
+            className="auth-box-input"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={loginData.password}
+            onChange={handleLoginChange}
+            required
+            className="auth-box-input"
+          />
+          <button type="submit" className="btn-login">
+            Log In
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const MainDashboard = () => {
   const { login, token } = useContext(AuthContext);
-
-  // Health check state
   const [healthStatus, setHealthStatus] = useState("Connecting to backend...");
 
-  // Form states
   const [signupData, setSignupData] = useState({
     username: "",
     email: "",
@@ -17,7 +135,6 @@ const MainDashboard = () => {
   });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
 
-  // Status feedback messages
   const [signupStatus, setSignupStatus] = useState({
     message: "",
     isError: false,
@@ -27,7 +144,6 @@ const MainDashboard = () => {
     isError: false,
   });
 
-  // 1. Check Backend Engine Health on boot
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/health")
@@ -38,13 +154,11 @@ const MainDashboard = () => {
       });
   }, []);
 
-  // Form Input Change Handlers
   const handleSignupChange = (e) =>
     setSignupData({ ...signupData, [e.target.name]: e.target.value });
   const handleLoginChange = (e) =>
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
 
-  // Submit Handler: Sign Up Registration
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setSignupStatus({ message: "", isError: false });
@@ -63,7 +177,6 @@ const MainDashboard = () => {
     }
   };
 
-  // Submit Handler: Account Sign In
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginStatus({ message: "", isError: false });
@@ -72,7 +185,6 @@ const MainDashboard = () => {
         "http://localhost:5000/api/auth/login",
         loginData,
       );
-      // Expected backend response signature: { token, user: { username, role } }
       login(res.data.user, res.data.token);
       setLoginStatus({ message: "Welcome back!", isError: false });
       setLoginData({ email: "", password: "" });
@@ -85,225 +197,57 @@ const MainDashboard = () => {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "#1a1a1a",
-        minHeight: "100vh",
-        color: "#ffffff",
-        fontFamily: "sans-serif",
-      }}
-    >
-      {/* Our Global Navbar Top Banner Layout */}
-      <Navbar />
+    <Router>
+      <div className="app-container">
+        <Navbar />
 
-      {/* Backend Engine Health Strip */}
-      <div
-        style={{
-          textAlign: "center",
-          padding: "15px 0",
-          backgroundColor: "#222",
-          borderBottom: "1px solid #333",
-        }}
-      >
-        <span>Backend Status: </span>
-        <strong
-          style={{ color: healthStatus === "ok" ? "#4caf50" : "#f44336" }}
-        >
-          {healthStatus}
-        </strong>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "40px",
-          padding: "40px",
-          justifyContent: "center",
-        }}
-      >
-        {/* SIGNUP BOX */}
-        <div
-          style={{
-            backgroundColor: "#252525",
-            padding: "30px",
-            borderRadius: "6px",
-            width: "320px",
-            border: "1px solid #333",
-          }}
-        >
-          <h3
-            style={{
-              margin: "0 0 15px 0",
-              color: "#ff0000",
-              borderBottom: "1px solid #333",
-              paddingBottom: "10px",
-            }}
-          >
-            Create Account
-          </h3>
-          {signupStatus.message && (
-            <p
-              style={{
-                color: signupStatus.isError ? "#f44336" : "#4caf50",
-                fontSize: "14px",
-              }}
-            >
-              {signupStatus.message}
-            </p>
-          )}
-          <form
-            onSubmit={handleSignupSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={signupData.username}
-              onChange={handleSignupChange}
-              required
-              style={{
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #444",
-                backgroundColor: "#111",
-                color: "#fff",
-              }}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={signupData.email}
-              onChange={handleSignupChange}
-              required
-              style={{
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #444",
-                backgroundColor: "#111",
-                color: "#fff",
-              }}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={signupData.password}
-              onChange={handleSignupChange}
-              required
-              style={{
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #444",
-                backgroundColor: "#111",
-                color: "#fff",
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                padding: "10px",
-                backgroundColor: "#ff0000",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              Sign Up
-            </button>
-          </form>
+        {/* Navigation context panel */}
+        <div className="nav-context-bar">
+          <Link to="/" className="nav-link">
+            Home Feed
+          </Link>
+          <Link to="/upload" className="nav-link">
+            Upload Video
+          </Link>
+          <Link to="/auth" className="nav-link">
+            Account
+          </Link>
         </div>
 
-        {/* LOGIN BOX */}
-        <div
-          style={{
-            backgroundColor: "#252525",
-            padding: "30px",
-            borderRadius: "6px",
-            width: "320px",
-            border: "1px solid #333",
-          }}
-        >
-          <h3
-            style={{
-              margin: "0 0 15px 0",
-              color: "#4caf50",
-              borderBottom: "1px solid #333",
-              paddingBottom: "10px",
-            }}
+        {/* System status display indicator strip */}
+        <div className="health-strip">
+          <span>Backend Status: </span>
+          <strong
+            style={{ color: healthStatus === "ok" ? "#4caf50" : "#f44336" }}
           >
-            Sign In
-          </h3>
-          {loginStatus.message && (
-            <p
-              style={{
-                color: loginStatus.isError ? "#f44336" : "#4caf50",
-                fontSize: "14px",
-              }}
-            >
-              {loginStatus.message}
-            </p>
-          )}
-          <form
-            onSubmit={handleLoginSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={loginData.email}
-              onChange={handleLoginChange}
-              required
-              style={{
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #444",
-                backgroundColor: "#111",
-                color: "#fff",
-              }}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={loginData.password}
-              onChange={handleLoginChange}
-              required
-              style={{
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #444",
-                backgroundColor: "#111",
-                color: "#fff",
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                padding: "10px",
-                backgroundColor: "#4caf50",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              Log In
-            </button>
-          </form>
+            {healthStatus}
+          </strong>
         </div>
+
+        <Routes>
+          <Route path="/" element={<VideoFeed />} />
+          <Route path="/upload" element={<UploadVideo />} />
+          <Route
+            path="/auth"
+            element={
+              <AuthPage
+                signupData={signupData}
+                handleSignupChange={handleSignupChange}
+                handleSignupSubmit={handleSignupSubmit}
+                signupStatus={signupStatus}
+                loginData={loginData}
+                handleLoginChange={handleLoginChange}
+                handleLoginSubmit={handleLoginSubmit}
+                loginStatus={loginStatus}
+              />
+            }
+          />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 };
 
-// Root layout wrapped carefully inside the Provider context cloud
 export default function App() {
   return (
     <AuthProvider>
