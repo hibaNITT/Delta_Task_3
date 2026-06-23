@@ -16,6 +16,10 @@ const VideoData = new mongoose.Schema({
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Array of User IDs who liked it
   viewCount: { type: Number, default: 0 },
   isPremier: { type: Boolean, default: false }, // For scheduled live premieres
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Video", VideoData);
