@@ -224,3 +224,8 @@ Express is designed to parse incoming text strings (JSON data). When a user uplo
 
 Q4: Why did you implement a Linked List traversal on the public feed?
 To organize video data streams using pointer-based traversal sequences instead of index-bound lookups. The backend constructs a chain of nodes bound to the auroraVideoIndex variable, and the frontend processes this chain using a while loop to flatten data sequentially for UI layout rendering.
+
+DAY 5
+
+Why use $addToSet instead of $push for likes?$addToSet is an atomic MongoDB operator that guarantees uniqueness within an array. If a user clicks the "Like" button rapidly due to network lag or a race condition, $push would blindly append their User ID multiple times, skewing the metrics. $addToSet ensures an item is only added if it does not already exist.Why store subscriptions on both User documents instead of just one?
+This is a deliberate denormalization trade-off. Updating both documents requires two writes instead of one, but it optimizes read operations incredibly well. To find out "Who am I subscribed to?" or "Who is subscribed to me?", the system can perform an instant $O(1)$ document lookup on the active user instead of a costly, collection-wide database scan ($O(N)$) across thousands of profiles
