@@ -2,12 +2,16 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
-import "./App.css"; // <-- Import your stylesheet right here!
+import "./App.css";
 
 // for video features
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import VideoFeed from "./components/VideoFeed";
 import UploadVideo from "./components/UploadVideo";
+import VideoDetail from "./components/VideoDetail";
+
+import Login from "./components/login";
+import SignUp from "./components/signUp";
 
 //login and signup forms
 const AuthPage = ({
@@ -242,6 +246,12 @@ const MainDashboard = () => {
               />
             }
           />
+
+          {/* FIXED: Direct, clean component injection */}
+          <Route path="/videos/:id" element={<VideoDetail />} />
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
     </Router>

@@ -15,7 +15,15 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Allows server to read JSON data
-app.use(cors()); // Permits communication with our frontend code
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+); // Permits communication with our frontend code
+
+//telling express to expose our uploads folder public
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Mounting auth routing
 app.use("/api/auth", authRoutes);

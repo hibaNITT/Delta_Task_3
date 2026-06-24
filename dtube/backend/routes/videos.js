@@ -7,6 +7,8 @@ const multer = require("multer");
 const path = require("path");
 const Video = require("../models/Video");
 
+const Comment = require("../models/Comment");
+
 // VIDEO ROUTES AND UPLOAD CONFIGURATION =========================================
 
 // Configure where and how uploaded videos are stored locally
@@ -78,25 +80,6 @@ router.get("/public-feed", async (req, res) => {
   }
 });
 
-// GET SINGLE VIDEO BY ID
-// GET http://localhost:5000/api/videos/:id
-router.get("/:id", async (req, res) => {
-  try {
-    const video = await Video.findById(req.params.id).populate(
-      "uploader",
-      "username email",
-    );
-    if (!video) {
-      return res.status(404).json({ message: "Video not found." });
-    }
-    res.status(200).json(video);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error fetching video.", error: error.message });
-  }
-});
-
 // PROTECTED ROUTE: Only logged-in users can upload a video (Token REQUIRED)
 // POST http://localhost:5000/api/videos/upload
 router.post("/upload", auth, upload.single("videoFile"), async (req, res) => {
@@ -123,6 +106,48 @@ router.post("/upload", auth, upload.single("videoFile"), async (req, res) => {
     res
       .status(500)
       .json({ message: "Server error during upload.", error: error.message });
+  }
+});
+
+// ADMIN MODERATION ROUTE: Overrides ownership checks to eliminate flagged content
+// DELETE http://localhost:5000/api/videos/moderate/:id
+router.delete("/moderate/:id", auth, isAdmin, async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video)
+      return res
+        .status(404)
+        .json({ message: "Video already removed or missing." });
+
+    await video.deleteOne();
+    res.status(200).json({
+      message: `Admin authorization verified successfully! Video ID ${req.params.id} has been permanently removed by the moderator.`,
+      moderatorId: req.user.userId,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error during admin moderation.",
+      error: error.message,
+    });
+  }
+});
+
+// GET SINGLE VIDEO BY ID
+// GET http://localhost:5000/api/videos/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id).populate(
+      "uploader",
+      "username email",
+    );
+    if (!video) {
+      return res.status(404).json({ message: "Video not found." });
+    }
+    res.status(200).json(video);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error fetching video.", error: error.message });
   }
 });
 
@@ -178,27 +203,97 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-// ADMIN MODERATION ROUTE: Overrides ownership checks to eliminate flagged content
-// DELETE http://localhost:5000/api/videos/moderate/:id
-router.delete("/moderate/:id", auth, isAdmin, async (req, res) => {
+// LIKES & COMMENTS
+
+// POST Toggle Like/Unlike
+router.post("/:id/like", auth, async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
-    if (!video)
-      return res
-        .status(404)
-        .json({ message: "Video already removed or missing." });
+    if (!video) return res.status(404).json({ message: "Video not found." });
 
-    await video.deleteOne();
-    res.status(200).json({
-      message: `Admin authorization verified successfully! Video ID ${req.params.id} has been permanently removed by the moderator.`,
-      moderatorId: req.user.userId,
+    const userId = req.user.userId;
+    const hasLiked = video.likes.includes(userId);
+
+    if (hasLiked) {
+      // Unlike Atomic $pull we use $asstoset
+      await Video.findByIdAndUpdate(req.params.id, {
+        $pull: { likes: userId },
+      });
+      res
+        .status(200)
+        .json({ message: "Video unliked successfully.", liked: false });
+    } else {
+      // Like: Atomic $addToSet to avoid duplicates
+      await Video.findByIdAndUpdate(req.params.id, {
+        $addToSet: { likes: userId },
+      });
+      res
+        .status(200)
+        .json({ message: "Video liked successfully.", liked: true });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error toggling like.", error: error.message });
+  }
+});
+
+// POST Add Comment
+router.post("/:id/comments", auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text)
+      return res.status(400).json({ message: "Comment text is required." });
+
+    const comment = new Comment({
+      video: req.params.id,
+      uploader: req.user.userId,
+      text,
     });
+    await comment.save();
+
+    const populatedComment = await comment.populate("uploader", "username");
+    res.status(201).json(populatedComment);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error posting comment.", error: error.message });
+  }
+});
+
+// GET Comments for a Video
+router.get("/:id/comments", async (req, res) => {
+  try {
+    const comments = await Comment.find({ video: req.params.id })
+      .populate("uploader", "username")
+      .sort({ createdAt: -1 });
+    res.status(200).json(comments);
   } catch (error) {
     res.status(500).json({
-      message: "Server error during admin moderation.",
+      message: "Server error fetching comments.",
       error: error.message,
     });
   }
 });
 
+// DELETE Comment (Owner or Admin)
+router.delete("/comments/:id", auth, async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment)
+      return res.status(404).json({ message: "Comment not found." });
+
+    // Allow deletion if requester is the comment author OR an admin
+    if (comment.uploader.toString() === req.user.userId || req.user.isAdmin) {
+      await comment.deleteOne();
+      return res.status(200).json({ message: "Comment deleted successfully." });
+    }
+    res.status(403).json({ message: "Unauthorized to delete this comment." });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error deleting comment.",
+      error: error.message,
+    });
+  }
+});
 module.exports = router;

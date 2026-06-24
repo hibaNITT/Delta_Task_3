@@ -2,7 +2,7 @@
 
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { AuthContext } from "../context/AuthContext"; // Path to your context tracker
+import { AuthContext } from "../context/AuthContext";
 
 const UploadVideo = () => {
   const { token } = useContext(AuthContext);

@@ -4,6 +4,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import { Link } from "react-router-dom";
+
 const VideoFeed = () => {
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState("");
@@ -21,14 +23,29 @@ const VideoFeed = () => {
 
         // Traverse the linked list sequentially
         while (headNode) {
-          if (headNode.data) {
-            flatArray.push(headNode.data);
+          // Robust checking: find where the video schema fields live
+          const videoPayload = headNode.data || headNode.video || headNode;
+
+          // Verify we have a valid identifier before pushing to the grid
+          if (videoPayload && (videoPayload._id || videoPayload.id)) {
+            // Standardize the ID field just in case
+            const normalizedVideo = {
+              ...videoPayload,
+              _id: videoPayload._id || videoPayload.id,
+            };
+            flatArray.push(normalizedVideo);
           }
+
           headNode = headNode.next;
         }
 
+        console.log(
+          "Successfully parsed feed linked list into array:",
+          flatArray,
+        );
         setVideos(flatArray);
       } catch (err) {
+        console.error("Feed extraction failed:", err);
         setError("Could not load the platform feed.");
       }
     };
@@ -40,39 +57,56 @@ const VideoFeed = () => {
     <div style={{ padding: "20px" }}>
       <h2>DTube Public Feed</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
+
       <div
+        className="video-feed-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
           gap: "20px",
+          padding: "20px",
         }}
       >
         {videos.map((video) => (
-          <div
+          <Link
+            to={`/videos/${video._id}`}
             key={video._id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "15px",
-              borderRadius: "5px",
-            }}
+            className="video-card-link"
+            style={{ textDecoration: "none", color: "inherit" }}
           >
-            <h3>{video.title}</h3>
-            <p>{video.description}</p>
-            <p>
-              <small>
-                Uploaded by: {video.uploader?.username || "Unknown User"}
-              </small>
-            </p>
+            <div
+              className="video-card"
+              style={{
+                cursor: "pointer",
+                backgroundColor: "#1e1e1e",
+                borderRadius: "8px",
+                overflow: "hidden",
+                padding: "10px",
+              }}
+            >
+              {/* Thumbnail fallback block */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "150px",
+                  backgroundColor: "#333",
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span style={{ color: "#aaa" }}>🎬 Video Preview</span>
+              </div>
 
-            {/* Standard native HTML5 player linking directly to your backend static serving route */}
-            <video width="100%" controls>
-              <source
-                src={`http://localhost:5000${video.videoUrl}`}
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
-          </div>
+              <h3 style={{ margin: "10px 0 5px 0", fontSize: "16px" }}>
+                {video.title}
+              </h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#aaa" }}>
+                By {video.uploader?.username || "Creator"}
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

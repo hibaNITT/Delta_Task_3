@@ -279,3 +279,157 @@
 .status-message {
   font-size: 14px;
 }
+
+/* ======================== video detail ================================================ */
+/* Container Layout */
+.video-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+/* HTML5 Video Player styling */
+.video-player-wrapper {
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 500px;
+  display: block;
+}
+
+/* Flex Bars (Header & Channel info) */
+.flex-row-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.video-meta-text {
+  color: #606060;
+}
+
+/* Interactive Like & Subscribe Buttons */
+.like-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.like-btn.active {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.like-btn.inactive {
+  background-color: #fff;
+  color: #000;
+}
+
+.subscribe-btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.subscribe-btn.active {
+  background-color: #cccccc;
+  color: #333333;
+}
+
+.subscribe-btn.inactive {
+  background-color: #cc0000;
+  color: #ffffff;
+}
+
+/* Description Text Block */
+.description-box {
+  padding: 15px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Comments System Layout */
+.comments-section {
+  margin-top: 20px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comment-input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.comment-submit-btn {
+  padding: 10px 20px;
+  background: #065fd4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.comment-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.comment-card {
+  display: flex;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.comment-author {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-delete-btn {
+  background: transparent;
+  color: #cc0000;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.placeholder-text {
+  color: #606060;
+  font-size: 14px;
+}
