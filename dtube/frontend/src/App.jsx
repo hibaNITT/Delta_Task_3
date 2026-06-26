@@ -15,6 +15,8 @@ import SignUp from "./components/signUp";
 
 import CategoryTreeMap from "./components/CategoryTreeMap";
 
+import CreatorChannel from "./components/CreatorChannel";
+
 //login and signup forms
 const AuthPage = ({
   signupData,
@@ -258,6 +260,7 @@ const MainDashboard = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<CategoryTreeMap />} />
+          <Route path="/user/:username" element={<CreatorChannel />} />
         </Routes>
       </div>
     </Router>
