@@ -9,6 +9,8 @@ const Video = require("../models/Video");
 
 const Comment = require("../models/Comment");
 
+const User = require("../models/user");
+
 // checking
 const { containsImproperText } = require("../utils/moderation");
 
@@ -308,12 +310,52 @@ router.get("/trending", async (req, res) => {
 
     res.status(200).json(trendingVideos);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Server error fetching trending feed",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Server error fetching trending feed",
+      error: error.message,
+    });
+  }
+});
+
+// GET /api/users/:username
+// Public route to fetch a channel profile and all their uploaded assets
+router.get("/profile/:username", async (req, res) => {
+  try {
+    // Locate the channel creator by their unique username
+    const channelOwner = await User.findOne({
+      username: req.params.username,
+    }).select("-password"); // Safeguard: exclude the password hash from escaping
+
+    if (!channelOwner) {
+      return res.status(404).json({ message: "Channel or user not found" });
+    }
+
+    //  Fetch all videos whose uploader reference ID matches this specific user ID
+    // We leverage our required search parameter configuration structure here
+    const channelVideos = await Video.find({ uploader: channelOwner._id }).sort(
+      { createdAt: -1 },
+    ); // Newest uploads first
+
+    //  Return a combined profile summary payload
+    res.status(200).json({
+      profile: {
+        username: channelOwner.username,
+        email: channelOwner.email,
+        role: channelOwner.role,
+        isPro: channelOwner.isPro,
+        strikes: channelOwner.strikes,
+        // Calculate subscriber count based on array length if populated
+        subscribersCount: channelOwner.memberships
+          ? channelOwner.memberships.length
+          : 0,
+      },
+      videos: channelVideos,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching channel aggregation layout",
+      error: error.message,
+    });
   }
 });
 

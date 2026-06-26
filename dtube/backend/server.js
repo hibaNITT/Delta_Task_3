@@ -37,6 +37,9 @@ app.use("/api/videos", videoRoutes);
 // mounting analytics routes
 app.use("/api/analytics", analyticsRoutes);
 
+// mounting user profile viewoing route
+app.use("/api/users", require("./routes/users"));
+
 // Connect to MongoDB Database
 mongoose
   .connect(process.env.MONGO_URI)

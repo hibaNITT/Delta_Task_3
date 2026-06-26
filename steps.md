@@ -269,3 +269,15 @@ Why use MongoDB's .sort({ viewCount: -1 }) instead of building a custom sorting 
 Answer: In a production-grade application, memory is precious. Sorting inside Node.js application code forces the server to load every single video document into RAM first. MongoDB uses internal B-Tree indexing on the database tier to fetch and stream only the top 20 matched records instantaneously, making it highly scalable and light on server memory.
 
 ============================================================
+
+Day 7: User Channels, Profile Customization, & The Normal Mode Finish Line! Today, we will build out the remaining core baseline features:
+
+User Profiles / Channels (Backend): Fetching specific user metadata alongside all the videos they've uploaded.
+
+Channel Layout (Frontend): Creating a clean channel view displaying uploader banners, statistics, and their matching video grid.
+
+Step 1: User Channel Aggregation Endpoint (Backend)
+We need an endpoint that aggregates a user's channel information. When a viewer clicks a creator's name, the frontend will request their profile data along with a list of all videos they've uploaded to the platform.
+
+Why handle queries this way?
+In MongoDB, instead of nesting millions of video objects inside a tiny single User document (which would quickly break MongoDB's strict 16MB document size limit), we use Ref Links. The video holds the parent user's \_id. On Day 7, we run a query on the videos collection filtered by that ID, which scales seamlessly even if a creator uploads thousands of videos!
