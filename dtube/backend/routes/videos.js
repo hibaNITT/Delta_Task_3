@@ -295,4 +295,26 @@ router.delete("/comments/:id", auth, async (req, res) => {
     });
   }
 });
+
+// GET /api/videos/trending
+// Fetches the top 20 most viewed videos for trending discovery
+router.get("/trending", async (req, res) => {
+  try {
+    // Finds videos, sorts them by viewCount in descending order (-1), limits to 20 items
+    const trendingVideos = await Video.find()
+      .sort({ viewCount: -1 })
+      .limit(20)
+      .populate("uploader", "username");
+
+    res.status(200).json(trendingVideos);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Server error fetching trending feed",
+        error: error.message,
+      });
+  }
+});
+
 module.exports = router;
