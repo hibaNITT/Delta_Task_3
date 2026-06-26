@@ -13,6 +13,8 @@ require("dotenv").config();
 
 const app = express();
 
+const path = require("path");
+
 // Middleware
 app.use(express.json()); // Allows server to read JSON data
 app.use(
