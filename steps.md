@@ -239,3 +239,9 @@ Watch-Time & Click Analytics Engine: A backend model and API to track video view
 Automated Content Tagging & Moderation: Text filtering mechanics to automatically flag improper comments or titles.
 
 Custom Category TreeMap Component: A frontend dashboard structure that showcases video category weights without external libraries.
+
+We need to create specific endpoints that the frontend can call to log an event (like a video click or periodically sending watch progress) and another endpoint for admins to fetch total platform stats.
+
+Optional User Attachment: Notice that our route doesn't crash if req.user is undefined. It conditionally grabs the user ID or saves it as null. This lets us track analytics silently across the site.
+
+MongoDB Aggregation ($match and $group): Instead of grabbing millions of raw event rows from the database and manually running a forEach loop in Node.js (which would freeze our application server under high traffic), we offload that computation to the database using an Aggregation Pipeline. MongoDB filters rows matching our criteria and computes an atomic mathematical sum instantly.
