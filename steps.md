@@ -245,3 +245,13 @@ We need to create specific endpoints that the frontend can call to log an event 
 Optional User Attachment: Notice that our route doesn't crash if req.user is undefined. It conditionally grabs the user ID or saves it as null. This lets us track analytics silently across the site.
 
 MongoDB Aggregation ($match and $group): Instead of grabbing millions of raw event rows from the database and manually running a forEach loop in Node.js (which would freeze our application server under high traffic), we offload that computation to the database using an Aggregation Pipeline. MongoDB filters rows matching our criteria and computes an atomic mathematical sum instantly.
+
+==========================================================
+
+To prevent spam or abusive language, we pass incoming comment text through a "filter" before it reaches the database. If it passes, it gets saved; if it fails, we reject it.
+
+First, we need a helper file that holds our blocked keywords and contains a function to check if any of those words are inside a piece of text.
+
+When someone types a comment containing a word from our blocklist ('spam', 'scam', or 'clickbait'), the server catches it and returns a 400 Bad Request.
+
+When someone types a clean comment, it passes right through and registers normally.
