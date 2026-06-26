@@ -13,6 +13,8 @@ import VideoDetail from "./components/VideoDetail";
 import Login from "./components/login";
 import SignUp from "./components/signUp";
 
+import CategoryTreeMap from "./components/CategoryTreeMap";
+
 //login and signup forms
 const AuthPage = ({
   signupData,
@@ -216,6 +218,9 @@ const MainDashboard = () => {
           <Link to="/auth" className="nav-link">
             Account
           </Link>
+          <Link to="/admin" className="nav-link">
+            Admin Metrics
+          </Link>
         </div>
 
         {/* System status display indicator strip */}
@@ -252,6 +257,7 @@ const MainDashboard = () => {
 
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin" element={<CategoryTreeMap />} />
         </Routes>
       </div>
     </Router>

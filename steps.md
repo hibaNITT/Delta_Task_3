@@ -255,3 +255,9 @@ First, we need a helper file that holds our blocked keywords and contains a func
 When someone types a comment containing a word from our blocklist ('spam', 'scam', or 'clickbait'), the server catches it and returns a 400 Bad Request.
 
 When someone types a clean comment, it passes right through and registers normally.
+
+Now that the backend verification is sorted out, we can turn over to the frontend! Our task is to build an administrative visualization panel. We want to display the distribution weight of video content across the platform's major categories (e.g., Tech, Gaming, Music) in real time.
+
+Instead of downloading heavy, complex external charting engines, we will build a responsive TreeMap layout component from scratch using native React layouts and inline calculations.
+
+How does this render proportionally?Dynamic Width Math: Instead of absolute pixels, we calculate standard percentages: $\text{Width} = (\text{Count} / \text{Total}) \times 100$.Flexbox Compression: By putting display: 'flex' on the parent and applying the dynamically calculated string percentage (width: ${widthPercentage}%``) onto each child div, the browser handles pixel distribution naturally. This provides a clean tree-map effect layout with minimal performance impact.
