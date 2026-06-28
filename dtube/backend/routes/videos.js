@@ -247,18 +247,31 @@ router.post("/:id/like", auth, async (req, res) => {
 router.post("/:id/comments", auth, async (req, res) => {
   try {
     const { text } = req.body;
-    // Intercept the text and run it through our moderation engine
-    if (containsImproperText(text)) {
-      return res.status(400).json({
-        message: "Comment rejected: Content violates community guidelines.",
-      });
+    const videoId = req.params.id;
+
+    // Check if req.user contains the ID as req.user._id or req.user.userId
+    // depending on how your auth middleware decodes the JWT token
+    const userId = req.user._id || req.user.userId;
+
+    if (!text) {
+      return res.status(400).json({ error: "Comment text is required" });
     }
 
-    // our existing logic to save the comment follows below:
+    const newComment = new Comment({
+      text: text,
+      video: videoId,
+      uploader: userId, // <-- MUST MATCH THE SCHEMA PROPERTY EXACTLY
+    });
 
-    res.status(21).json({ message: "Comment posted successfully!" }); // Or your current success response
+    await newComment.save();
+
+    // Optional: Populate the uploader details so the frontend can display the username instantly
+    const populatedComment = await newComment.populate("uploader", "username");
+
+    res.status(201).json(populatedComment);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error saving comment:", error);
+    res.status(500).json({ error: "Server crashed while adding comment" });
   }
 });
 

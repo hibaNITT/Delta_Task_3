@@ -17,6 +17,8 @@ import CategoryTreeMap from "./components/CategoryTreeMap";
 
 import CreatorChannel from "./components/CreatorChannel";
 
+import Trending from "./components/Trending";
+
 //login and signup forms
 const AuthPage = ({
   signupData,
@@ -261,6 +263,8 @@ const MainDashboard = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<CategoryTreeMap />} />
           <Route path="/user/:username" element={<CreatorChannel />} />
+
+          <Route path="/trending" element={<Trending />} />
         </Routes>
       </div>
     </Router>
