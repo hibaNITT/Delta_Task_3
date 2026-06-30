@@ -129,6 +129,26 @@ const AuthPage = ({
             Log In
           </button>
         </form>
+
+        <div style={{ margin: "15px 0", textAlign: "center", color: "#888" }}>OR</div>
+
+        {/* Hand-rolled Google Sign In button added directly to the account page */}
+        <a
+          href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
+          className="google-signin-btn"
+          style={{
+            display: "block",
+            textAlign: "center",
+            padding: "10px",
+            backgroundColor: "#4285F4",
+            color: "white",
+            textDecoration: "none",
+            borderRadius: "4px",
+            fontWeight: "bold",
+          }}
+        >
+          Sign in with Google
+        </a>
       </div>
     </div>
   );
@@ -155,6 +175,34 @@ const MainDashboard = () => {
   });
 
   useEffect(() => {
+    // Check if we were redirected from Google with query parameters (token, username, etc.)
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get("token");
+
+    if (urlToken) {
+      const urlId = params.get("id");
+      const urlUsername = params.get("username");
+      const urlEmail = params.get("email");
+      const urlRole = params.get("role");
+      const urlIsPro = params.get("isPro") === "true";
+
+      // Reconstruct user object
+      const userData = {
+        id: urlId,
+        username: urlUsername,
+        email: urlEmail,
+        role: urlRole || "user",
+        isPro: urlIsPro,
+      };
+
+      // Save user session globally
+      login(userData, urlToken);
+      alert("Logged in with Google successfully!");
+
+      // Hard redirect to home to clear query parameters and prevent loop issues
+      window.location.href = "/";
+    }
+
     axios
       .get("http://localhost:5000/api/health")
       .then((response) => setHealthStatus(response.data.status))
@@ -162,7 +210,7 @@ const MainDashboard = () => {
         console.error("Error fetching health status:", error);
         setHealthStatus("Failed to connect to backend engine.");
       });
-  }, []);
+  }, [login]);
 
   const handleSignupChange = (e) =>
     setSignupData({ ...signupData, [e.target.name]: e.target.value });

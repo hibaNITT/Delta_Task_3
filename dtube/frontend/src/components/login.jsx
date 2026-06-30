@@ -1,9 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
+import { useNavigate, useLocation } from "react-router-dom";
+
 const Login = () => {
-  //Local state to track what the user types into inputs
+  // Local state to track what the user types into inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,9 +33,19 @@ const Login = () => {
     }
   };
 
+  const GOOGLE_CLIENT_ID =
+    "670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com";
+  const REDIRECT_URI = "http://localhost:5000/api/auth/google/callback";
+  const SCOPE = "profile email";
+
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPE)}`;
+
   return (
-    <div style={{ padding: "20px", maxWidth: "400px" }}>
+    <div
+      style={{ maxWidth: "400px", margin: "2rem auto", textAlign: "center" }}
+    >
       <h2>Login to DTube</h2>
+
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div>
@@ -58,6 +70,38 @@ const Login = () => {
         <br />
         <button type="submit">Login</button>
       </form>
+
+      <hr style={{ margin: "1.5rem 0" }} />
+
+      <div
+        className="oauth-divider"
+        style={{ margin: "20px 0", textAlign: "center" }}
+      >
+        <span>OR</span>
+      </div>
+
+      <div
+        className="oauth-buttons-container"
+        style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+      >
+        {/* Hand-rolled Sign in with Google anchor button */}
+        <a
+          href={googleAuthUrl}
+          className="google-signin-btn"
+          style={{
+            display: "block",
+            textAlign: "center",
+            padding: "10px",
+            backgroundColor: "#4285F4",
+            color: "white",
+            textDecoration: "none",
+            borderRadius: "4px",
+            fontWeight: "bold",
+          }}
+        >
+          Sign in with Google
+        </a>
+      </div>
     </div>
   );
 };

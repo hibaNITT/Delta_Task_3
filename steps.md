@@ -292,3 +292,48 @@ Core Media System: Video metadata loading, active playback handlers, and dynamic
 Advanced Aggregations: Custom TreeMap dashboard modules crunching total system minutes and views.
 
 Public Portals & Feeds: Distinct public user channels, separate custom CSS grids, global high-performing Trending sort feeds, and interactive video discussion boards.
+
+============================================================
+
+Day 8: Hand-Rolled Google OAuth2 Pipeline
+The Goal: Build a secure social login without black-box libraries like Passport.js.
+
+The Flow:
+
+Frontend presents a custom "Sign in with Google" button pointing to Google's authentication server.
+
+The user signs in and is redirected back to our server with a one-time authorization code.
+
+Our backend exchanges that code with Google's token endpoint using our protected client_secret.
+
+We fetch the user's details, save them to the database, and issue our platform's native token (DTUBE_CONSTELLATION_Conspiracy_SECRET) right back into your existing AuthContext.
+
+OUTH
+The Handshake Request: The user clicks "Sign in with Google" on your frontend. The browser redirects them to Google's public authorization endpoint.
+
+The User Approves: Google authenticates the user and shows them a screen asking permission to share their basic profile/email with DTube.
+
+The Temporary Code Redirect: Google redirects the browser back to your backend endpoint (/api/auth/google/callback) containing a temporary, short-lived verification code string in the URL parameters.
+
+The Secure Exchange: Your backend intercepts this code and sends a direct server-to-server POST request to Google's secure token endpoint. Along with the code, it transmits your private client_secret. Because this happens directly between servers, your secret is never exposed to the public browser window.
+
+Data Retrieval: Google verifies the secret and code, sending back an access_token. Your backend utilizes this token to request the user's details (email and name) from Google's resource server.
+
+Local Token Issue: Your database creates a local user account if it doesn't already exist. It then generates your own system's custom JSON Web Token (JWT) using DTUBE_CONSTELLATION_Conspiracy_SECRET, routing it back into your React application to manage the user session natively.
+
+Why does OAuth utilize a two-stage "authorization code exchange" sequence instead of returning user profiles immediately?
+
+Answer: The initial client redirect happens via the user's browser, which is inherently visible and vulnerable to manipulation, browser history leaks, or plugin tracking. By returning a temporary, short-lived authorization code instead of user data, the backend can safely trade that code alongside the protected application client_secret across a direct, encrypted server-to-server connection. Malicious external observers intercepting the code cannot do anything with it because they lack your platform's backend secret.
+
+What is the functional difference between Authentication and Authorization within OAuth context definitions?
+
+Answer: Authentication verifies identity ("who you are"), whereas Authorization confirms explicit access permissions ("what you are allowed to modify or read"). OAuth 2.0 was explicitly designed as an authorization protocol (e.g., granting an external utility app permission to view your Google Calendar file metrics without granting your main account login password). Utilizing it as an identity sign-in verification channel (Authentication) is a common convention that works by asking the third party to read the user's primary identity card information explicitly.
+
+============================================================
+
+Step 1 (Fix): Resolved Google OAuth Integration Issue
+1. Identified that backend callback was redirecting to port 3000 instead of port 5173. Changed it to port 5173.
+2. Expanded backend query parameters to include complete user metadata: token, id, username, email, role, and isPro.
+3. Added custom duplicate username checking to automatically increment username suffixes (e.g., testuser1) if a Google registration username collision occurs.
+4. Integrated the Google Sign In anchor button directly inside the login container of the main `AuthPage` component (at `/auth` route) and the `Login` component (at `/login` route).
+5. Programmed a global `useEffect` hook in `MainDashboard` (`App.jsx`) and `Login` (`login.jsx`) to intercept URL query parameters, construct the global user object, execute the global `login` context handler to set the user state and local storage, and navigate cleanly to the home screen.

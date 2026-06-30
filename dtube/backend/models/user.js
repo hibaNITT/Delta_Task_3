@@ -17,6 +17,18 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    authProvider: {
+      type: String,
+      enum: ["manual", "google"],
+      default: "manual",
+    },
+    password: {
+      type: String,
+      required: function () {
+        return this.authProvider === "manual"; // Only required for standard signups
+      },
+    },
   },
   { timestamps: true },
 );
