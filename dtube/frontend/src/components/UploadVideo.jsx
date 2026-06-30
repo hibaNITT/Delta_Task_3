@@ -9,6 +9,8 @@ const UploadVideo = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [videoFile, setVideoFile] = useState(null);
+  const [isPremier, setIsPremier] = useState(false);
+  const [premierTime, setPremierTime] = useState("");
   const [message, setMessage] = useState("");
 
   const handleFileChange = (e) => {
@@ -27,6 +29,8 @@ const UploadVideo = () => {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("videoFile", videoFile);
+    formData.append("isPremier", isPremier);
+    formData.append("premierTime", isPremier ? premierTime : "");
 
     try {
       const response = await axios.post(
@@ -43,6 +47,8 @@ const UploadVideo = () => {
       setTitle("");
       setDescription("");
       setVideoFile(null);
+      setIsPremier(false);
+      setPremierTime("");
     } catch (error) {
       setMessage(
         error.response?.data?.message || "Error occurred during upload.",
@@ -80,7 +86,33 @@ const UploadVideo = () => {
             required
           />
         </div>
-        <button type="submit" style={{ marginTop: "15px" }}>
+
+        {/* Live Premier Scheduling Controls */}
+        <div style={{ marginTop: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+          <input
+            type="checkbox"
+            id="isPremier"
+            checked={isPremier}
+            onChange={(e) => setIsPremier(e.target.checked)}
+          />
+          <label htmlFor="isPremier" style={{ fontWeight: "bold", cursor: "pointer" }}>
+            Schedule as Live Premier
+          </label>
+        </div>
+
+        {isPremier && (
+          <div style={{ marginTop: "10px" }}>
+            <label style={{ display: "block", marginBottom: "5px" }}>Premier Date & Time:</label>
+            <input
+              type="datetime-local"
+              value={premierTime}
+              onChange={(e) => setPremierTime(e.target.value)}
+              required
+            />
+          </div>
+        )}
+
+        <button type="submit" style={{ marginTop: "20px", display: "block", width: "100%" }}>
           Upload Video
         </button>
       </form>

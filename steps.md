@@ -337,3 +337,26 @@ Step 1 (Fix): Resolved Google OAuth Integration Issue
 3. Added custom duplicate username checking to automatically increment username suffixes (e.g., testuser1) if a Google registration username collision occurs.
 4. Integrated the Google Sign In anchor button directly inside the login container of the main `AuthPage` component (at `/auth` route) and the `Login` component (at `/login` route).
 5. Programmed a global `useEffect` hook in `MainDashboard` (`App.jsx`) and `Login` (`login.jsx`) to intercept URL query parameters, construct the global user object, execute the global `login` context handler to set the user state and local storage, and navigate cleanly to the home screen.
+
+============================================================
+
+Step 2: Live Premier & Real-Time Live Chat via WebSockets
+1. Added `premierTime` to the Video database schema to hold scheduled release times.
+2. Programmed body parser variables in video upload/update routes (`routes/videos.js`) to capture isPremier and premierTime payloads.
+3. Setup checkbox and datetime-local input nodes inside the frontend React upload form (`UploadVideo.jsx`) to allow creators to schedule video premieres.
+4. Bound a native Node.js `ws` WebSocketServer to the active HTTP express app listener in `server.js`.
+5. Created a pointer room matrix (`rooms = new Map()`) to isolate chat broadcast sets for each individual video stream.
+6. Added user token authorization checks inside the incoming message parser. Before broadcasting chat data, the WebSocket server unpacks the client's JWT token, validates it against `DTUBE_CONSTELLATION_Conspiracy_SECRET`, retrieves the user's authentic username, and sends it to all other viewers in that room.
+7. Engineered a countdown hook inside the frontend React player container (`VideoDetail.jsx`) that hides the `<video>` node and renders a countdown clock if the scheduled premier time lies in the future.
+8. Configured real-time WebSocket connection hooks in the player page to join the video's chat room and render inbound chat feeds in a side console.
+
+STUDY SHEET: WEBSOCKET & PREMIER CONCEPT DEFINITIONS
+Q1: How does a WebSocket connection differ from a normal HTTP request/response?
+Answer: HTTP is request-response based: the client asks, the server replies, and the connection closes immediately (stateless and one-way). WebSockets use a TCP handshake to "upgrade" the connection to a persistent, full-duplex, two-way channel. This allows both the client and the server to push raw messages in real time without the overhead of repeating HTTP headers.
+
+Q2: Why do we use rooms (Map of Sets) for WebSocket broadcasting?
+Answer: Without room isolation, a message sent by a viewer on video A would be broadcast to every active WebSocket connection on the platform, leading to severe resource wastage, data leaks, and chat mix-ups. By grouping connections in a Map keyed by `videoId`, we can broadcast messages exclusively to clients viewing that specific video.
+
+Q3: Why authenticate WebSocket messages using JWT instead of cookies or session IDs?
+Answer: WebSockets do not have traditional HTTP request-response lifecycles, and standard cookie headers are often not accessible across different subprotocols or frameworks. By sending the user's JWT token inside the JSON payload of the message itself, we can run stateless token verification (`jwt.verify`) on every single incoming chat message, ensuring the sender is authorized without database overhead.
+

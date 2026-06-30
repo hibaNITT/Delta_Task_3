@@ -60,6 +60,91 @@ app.get("/api/health", (req, res) => {
 
 // Start listening for connections
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(` Server running smoothly on port ${PORT}`);
+});
+
+// WEBSOCKET NATIVE SERVER FOR LIVE CHAT PREMIERES
+const { WebSocketServer } = require("ws");
+const wss = new WebSocketServer({ server });
+const jwt = require("jsonwebtoken");
+const User = require("./models/user");
+
+// Keep track of rooms: videoId -> Set of ws connections
+const rooms = new Map();
+
+wss.on("connection", (ws) => {
+  console.log("New WebSocket connection established.");
+  let currentVideoId = null;
+
+  ws.on("message", async (messageStr) => {
+    try {
+      const message = JSON.parse(messageStr);
+
+      // Handle user joining a specific video's live chat room
+      if (message.type === "join") {
+        const { videoId } = message;
+        currentVideoId = videoId;
+        
+        if (!rooms.has(videoId)) {
+          rooms.set(videoId, new Set());
+        }
+        rooms.get(videoId).add(ws);
+        console.log(`User joined chat room for video: ${videoId}`);
+      } 
+      
+      // Handle user sending a chat message
+      else if (message.type === "message") {
+        const { videoId, text, token } = message;
+        if (!text || !token) return;
+
+        // Verify the user's JWT token
+        try {
+          const decoded = jwt.verify(
+            token,
+            process.env.DTUBE_CONSTELLATION_Conspiracy_SECRET
+          );
+          
+          // Fetch the user's details to get their username
+          const user = await User.findById(decoded.userId);
+          if (!user) return;
+
+          const chatPayload = {
+            type: "chat",
+            username: user.username,
+            userId: user._id,
+            text: text,
+            createdAt: new Date(),
+          };
+
+          // Broadcast to everyone in the room
+          const roomConnections = rooms.get(videoId);
+          if (roomConnections) {
+            const payloadStr = JSON.stringify(chatPayload);
+            roomConnections.forEach((client) => {
+              if (client.readyState === 1) { // 1 means OPEN
+                client.send(payloadStr);
+              }
+            });
+          }
+        } catch (err) {
+          console.error("WebSocket JWT verification failed:", err.message);
+          ws.send(JSON.stringify({ type: "error", message: "Invalid authentication token." }));
+        }
+      }
+    } catch (err) {
+      console.error("Error parsing WebSocket message:", err.message);
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("WebSocket connection closed.");
+    if (currentVideoId && rooms.has(currentVideoId)) {
+      const room = rooms.get(currentVideoId);
+      room.delete(ws);
+      if (room.size === 0) {
+        rooms.delete(currentVideoId);
+      }
+    }
+  });
 });

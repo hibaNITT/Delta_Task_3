@@ -93,14 +93,15 @@ router.post("/upload", auth, upload.single("videoFile"), async (req, res) => {
       return res.status(400).json({ message: "Please upload a video file." });
     }
 
-    const { title, description, isPremier } = req.body;
+    const { title, description, isPremier, premierTime } = req.body;
 
     const newVideo = new Video({
       title,
       description,
       videoUrl: `/uploads/${req.file.filename}`, // Web relative link to access the stream
       uploader: req.user.userId, // Pulled straight from decoded JWT payload
-      isPremier: isPremier === "true",
+      isPremier: isPremier === "true" || isPremier === true,
+      premierTime: premierTime ? new Date(premierTime) : null,
     });
 
     await newVideo.save();
@@ -170,11 +171,13 @@ router.put("/:id", auth, async (req, res) => {
         .json({ message: "Unauthorized. You do not own this video." });
     }
 
-    const { title, description, isPremier } = req.body;
+    const { title, description, isPremier, premierTime } = req.body;
     if (title) video.title = title;
     if (description) video.description = description;
     if (isPremier !== undefined)
       video.isPremier = isPremier === "true" || isPremier === true;
+    if (premierTime !== undefined)
+      video.premierTime = premierTime ? new Date(premierTime) : null;
 
     await video.save();
     res.status(200).json({ message: "Video updated successfully!", video });

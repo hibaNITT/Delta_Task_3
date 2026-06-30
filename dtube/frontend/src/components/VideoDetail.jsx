@@ -20,6 +20,13 @@ const VideoDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Live Chat and Premier Countdown States
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [ws, setWs] = useState(null);
+  const [isPremierFuture, setIsPremierFuture] = useState(false);
+  const [countdownText, setCountdownText] = useState("");
+
   // Headers config for secure API requests
   const apiConfig = {
     headers: { Authorization: `Bearer ${token}` },
@@ -89,6 +96,90 @@ const VideoDetail = () => {
       fetchVideoData();
     }
   }, [id, user]);
+
+  // 1. Live Chat WebSocket Connection Setup
+  useEffect(() => {
+    if (!video || !video.isPremier) return;
+
+    // Open connection to WebSocket server
+    const socket = new WebSocket("ws://localhost:5000");
+    setWs(socket);
+
+    socket.onopen = () => {
+      console.log("Connected to Live Chat server");
+      // Subscribe to this video's room
+      socket.send(JSON.stringify({ type: "join", videoId: id }));
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type === "chat") {
+          setChatMessages((prev) => [...prev, message]);
+        }
+      } catch (err) {
+        console.error("Error receiving WebSocket message:", err);
+      }
+    };
+
+    socket.onclose = () => {
+      console.log("Disconnected from Live Chat server");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [video, id]);
+
+  // 2. Scheduled Live Premier Countdown Timer
+  useEffect(() => {
+    if (!video || !video.isPremier || !video.premierTime) {
+      setIsPremierFuture(false);
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const target = new Date(video.premierTime);
+      const difference = target - now;
+
+      if (difference > 0) {
+        setIsPremierFuture(true);
+        // Calculate units
+        const hours = Math.floor(difference / (1000 * 60 * 60));
+        const minutes = Math.floor((difference / (1000 * 60)) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+
+        const pad = (num) => String(num).padStart(2, "0");
+        setCountdownText(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+      } else {
+        setIsPremierFuture(false);
+      }
+    };
+
+    updateCountdown(); // Run immediately
+    const intervalId = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [video]);
+
+  // Handle sending a chat message to the WebSocket server
+  const handleSendChatMessage = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    if (!token) return alert("Please log in to chat!");
+    if (!ws) return alert("Chat server connection is not active.");
+
+    const payload = {
+      type: "message",
+      videoId: id,
+      text: chatInput,
+      token: token,
+    };
+
+    ws.send(JSON.stringify(payload));
+    setChatInput("");
+  };
 
   // Toggle Like button handler
   const handleLikeToggle = async () => {
@@ -192,16 +283,131 @@ const VideoDetail = () => {
     );
 
   return (
-    <div className="video-detail-container">
-      {/* Video Player */}
-      <div className="video-player-wrapper">
-        <video
-          src={`http://localhost:5000/uploads/${video.videoUrl.split("/").pop()}`}
-          crossOrigin="anonymous"
-          controls
-          autoPlay
-          style={{ width: "100%", maxHeight: "550px", display: "block" }}
-        />
+    <div className="video-detail-container" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Outer row wrapper holding Player/Countdown (left) and Live Chat (right) */}
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", alignItems: "stretch" }}>
+        
+        {/* Left Side: Video Player or Countdown Banner */}
+        <div style={{ flex: "2", minWidth: "300px" }}>
+          <div className="video-player-wrapper" style={{ backgroundColor: "#000", position: "relative" }}>
+            {isPremierFuture ? (
+              // Countdown Display for Future Scheduled Premiere
+              <div style={{
+                height: "400px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#fff",
+                backgroundColor: "#111",
+                fontFamily: "monospace"
+              }}>
+                <h2 style={{ color: "#e50914", margin: "0 0 10px 0" }}>LIVE PREMIER COUNTDOWN</h2>
+                <div style={{ fontSize: "3rem", fontWeight: "bold" }}>{countdownText}</div>
+                <p style={{ marginTop: "15px", color: "#aaa" }}>
+                  Premiering on {new Date(video.premierTime).toLocaleString()}
+                </p>
+              </div>
+            ) : (
+              // Standard Video Player revealed once countdown hits zero
+              <video
+                src={`http://localhost:5000/uploads/${video.videoUrl.split("/").pop()}`}
+                crossOrigin="anonymous"
+                controls
+                autoPlay
+                style={{ width: "100%", maxHeight: "550px", display: "block" }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Live Chat Sidebar (Only visible for Premiere videos) */}
+        {video.isPremier && (
+          <div style={{
+            flex: "1",
+            minWidth: "280px",
+            border: "1px solid #333",
+            backgroundColor: "#1a1a1a",
+            color: "#fff",
+            borderRadius: "6px",
+            display: "flex",
+            flexDirection: "column",
+            height: isPremierFuture ? "400px" : "550px",
+            maxHeight: "550px",
+            justifyContent: "space-between"
+          }}>
+            {/* Header */}
+            <div style={{
+              padding: "10px",
+              borderBottom: "1px solid #333",
+              backgroundColor: "#222",
+              textAlign: "center",
+              fontWeight: "bold",
+              color: "#e50914"
+            }}>
+              🔴 LIVE CHAT
+            </div>
+
+            {/* Chat Messages Log */}
+            <div style={{
+              padding: "10px",
+              flex: "1",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px"
+            }}>
+              {chatMessages.map((msg, index) => (
+                <div key={index} style={{ fontSize: "0.9rem" }}>
+                  <span style={{ color: "#4285F4", fontWeight: "bold" }}>@{msg.username}</span>:{" "}
+                  <span>{msg.text}</span>
+                </div>
+              ))}
+              {chatMessages.length === 0 && (
+                <div style={{ color: "#777", textAlign: "center", fontStyle: "italic", marginTop: "20px" }}>
+                  Welcome to Live Chat! Say hello...
+                </div>
+              )}
+            </div>
+
+            {/* Inbound Input Form controls */}
+            <div style={{ padding: "10px", borderTop: "1px solid #333", backgroundColor: "#222" }}>
+              {token ? (
+                <form onSubmit={handleSendChatMessage} style={{ display: "flex", gap: "5px" }}>
+                  <input
+                    type="text"
+                    placeholder="Chat..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    style={{
+                      flex: "1",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #444",
+                      backgroundColor: "#333",
+                      color: "#fff"
+                    }}
+                  />
+                  <button type="submit" style={{
+                    padding: "8px 12px",
+                    backgroundColor: "#e50914",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold"
+                  }}>
+                    Send
+                  </button>
+                </form>
+              ) : (
+                <div style={{ fontSize: "0.85rem", color: "#aaa", textAlign: "center" }}>
+                  Please <Link to="/auth" style={{ color: "#4285F4" }}>login</Link> to participate in Live Chat.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Video Title and Engagement row */}
