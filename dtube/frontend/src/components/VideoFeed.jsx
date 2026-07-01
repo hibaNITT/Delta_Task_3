@@ -1,14 +1,18 @@
 // our backend endpoint GET /api/videos/public-feed returns the custom auroraVideoIndex linked list
 // instead of a flat array, our React component must loop through the node pointers (.next) to build a UI-renderable collection.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-
+import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import FlagVideoModal from "./FlagVideoModal";
 
 const VideoFeed = () => {
+  const { token } = useContext(AuthContext);
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState("");
+  const [showFlagModal, setShowFlagModal] = useState(false);
+  const [flaggedVideoId, setFlaggedVideoId] = useState(null);
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -54,61 +58,56 @@ const VideoFeed = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="feed-container">
       <h2>DTube Public Feed</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="feed-error">{error}</p>}
 
-      <div
-        className="video-feed-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: "20px",
-          padding: "20px",
-        }}
-      >
+      <div className="video-feed-grid">
         {videos.map((video) => (
-          <Link
-            to={`/videos/${video._id}`}
-            key={video._id}
-            className="video-card-link"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <div
-              className="video-card"
-              style={{
-                cursor: "pointer",
-                backgroundColor: "#1e1e1e",
-                borderRadius: "8px",
-                overflow: "hidden",
-                padding: "10px",
-              }}
-            >
-              {/* Thumbnail fallback block */}
-              <div
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  backgroundColor: "#333",
-                  borderRadius: "4px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span style={{ color: "#aaa" }}>🎬 Video Preview</span>
-              </div>
+          <div key={video._id} className="video-card-wrapper">
+            <Link to={`/videos/${video._id}`} className="video-card-link">
+              <div className="video-card">
+                {/* Thumbnail fallback block */}
+                <div className="video-thumbnail">
+                  <span>🎬 Video Preview</span>
+                </div>
 
-              <h3 style={{ margin: "10px 0 5px 0", fontSize: "16px" }}>
-                {video.title}
-              </h3>
-              <p style={{ margin: "0", fontSize: "12px", color: "#aaa" }}>
-                By {video.uploader?.username || "Creator"}
-              </p>
-            </div>
-          </Link>
+                <h3 className="video-card-title">{video.title}</h3>
+                <p className="video-card-creator">
+                  By {video.uploader?.username || "Creator"}
+                </p>
+              </div>
+            </Link>
+            {token && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setFlaggedVideoId(video._id);
+                  setShowFlagModal(true);
+                }}
+                className="feed-flag-btn"
+              >
+                🚩
+              </button>
+            )}
+          </div>
         ))}
       </div>
+
+      {showFlagModal && flaggedVideoId && (
+        <FlagVideoModal
+          videoId={flaggedVideoId}
+          onClose={() => {
+            setShowFlagModal(false);
+            setFlaggedVideoId(null);
+          }}
+          onSuccess={() => {
+            alert("Video reported successfully");
+            setShowFlagModal(false);
+            setFlaggedVideoId(null);
+          }}
+        />
+      )}
     </div>
   );
 };

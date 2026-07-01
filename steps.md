@@ -332,6 +332,7 @@ Answer: Authentication verifies identity ("who you are"), whereas Authorization 
 ============================================================
 
 Step 1 (Fix): Resolved Google OAuth Integration Issue
+
 1. Identified that backend callback was redirecting to port 3000 instead of port 5173. Changed it to port 5173.
 2. Expanded backend query parameters to include complete user metadata: token, id, username, email, role, and isPro.
 3. Added custom duplicate username checking to automatically increment username suffixes (e.g., testuser1) if a Google registration username collision occurs.
@@ -341,6 +342,7 @@ Step 1 (Fix): Resolved Google OAuth Integration Issue
 ============================================================
 
 Step 2: Live Premier & Real-Time Live Chat via WebSockets
+
 1. Added `premierTime` to the Video database schema to hold scheduled release times.
 2. Programmed body parser variables in video upload/update routes (`routes/videos.js`) to capture isPremier and premierTime payloads.
 3. Setup checkbox and datetime-local input nodes inside the frontend React upload form (`UploadVideo.jsx`) to allow creators to schedule video premieres.
@@ -348,7 +350,72 @@ Step 2: Live Premier & Real-Time Live Chat via WebSockets
 5. Created a pointer room matrix (`rooms = new Map()`) to isolate chat broadcast sets for each individual video stream.
 6. Added user token authorization checks inside the incoming message parser. Before broadcasting chat data, the WebSocket server unpacks the client's JWT token, validates it against `DTUBE_CONSTELLATION_Conspiracy_SECRET`, retrieves the user's authentic username, and sends it to all other viewers in that room.
 7. Engineered a countdown hook inside the frontend React player container (`VideoDetail.jsx`) that hides the `<video>` node and renders a countdown clock if the scheduled premier time lies in the future.
-8. Configured real-time WebSocket connection hooks in the player page to join the video's chat room and render inbound chat feeds in a side console.
+
+============================================================
+
+Day 9: User Reporting & Admin Moderation System
+
+The Goal: Enable users to flag malicious comments and request copyright strikes against videos. Give admins a unified dashboard to review and resolve reports.
+
+Backend Infrastructure:
+
+1. Flag Model (models/flag.js): A new database schema to track all reports with fields for:
+   - type: Whether the report is for a "comment" or "video"
+   - targetId: The MongoDB ObjectId of the flagged content
+   - reason: The category of violation ("malicious", "copyright", "spam", "harassment", "other")
+   - description: User's explanation text
+   - reportedBy: Reference to the User who submitted the report
+   - status: Tracking state ("pending", "resolved", "dismissed")
+   - adminNotes: Admin's action notes
+   - resolvedBy: Reference to admin user who handled it
+
+2. Flag Routes (routes/flags.js): Three protected API endpoints:
+   - POST /api/flags/comment/:commentId: Users can submit a comment report (with duplicate-check validation)
+   - POST /api/flags/video/:videoId: Users can submit a video report (with duplicate-check validation)
+   - GET /api/flags/admin/pending: Admin-only endpoint returning all pending flags with populated reporter and target data
+   - PUT /api/flags/admin/:flagId: Admin endpoint to resolve a flag with status ("resolved", "dismissed"). On "resolved", the content (comment or video) is deleted from the database.
+
+Why This Architecture?
+
+Atomic Report Prevention: The duplicate-check ensures a user cannot spam multiple reports on the same content, preventing bad-actor abuse of the moderation system.
+
+Content Deletion on Resolve: When an admin marks a report as "resolved", the backend automatically deletes the targeted comment or video document, ensuring immediate removal.
+
+Immutable Audit Trail: Each flag record captures the reporter's identity, timestamp, and admin resolution details, creating a compliance-friendly history log for platform governance.
+
+Frontend Components:
+
+1. FlagCommentModal.jsx: A reusable modal form that appears when a user clicks a "Report" button on a comment. It captures:
+   - Reason dropdown (malicious, copyright, spam, harassment, other)
+   - Description textarea for explanation
+   - Async POST request to /api/flags/comment/:commentId
+   - Error handling and loading states
+
+2. FlagVideoModal.jsx: A reusable modal form for video reports with:
+   - Reason dropdown (copyright, malicious, spam, harassment, other)
+   - Description textarea
+   - Async POST request to /api/flags/video/:videoId
+   - Error handling and loading states
+
+3. AdminPanel.jsx: An admin-exclusive dashboard component that:
+   - Fetches all pending flags via GET /api/flags/admin/pending (auth + isAdmin required)
+   - Displays each flag in a card showing: type, reason, reporter name, and description
+   - Provides "Remove Content" button (resolves with status="resolved") and "Dismiss" button (status="dismissed")
+   - Re-fetches list after each action to reflect real-time updates
+
+Integration Points:
+
+- In VideoDetail.jsx or comment list components, add a flag icon button that triggers FlagCommentModal or FlagVideoModal
+- In the admin navigation, link to the AdminPanel component (protected by isAdmin middleware)
+- Flag routes are mounted on the server at /api/flags in server.js
+
+Why Use This Over Third-Party Solutions?
+
+Simple, Direct Control: Hand-built from scratch using minimal dependencies, making the system transparent and easy to audit for security.
+
+Scalable Data Model: The Flag schema is indexed by targetId and type, allowing fast filtering even with millions of reports.
+
+Flexible Admin Actions: Admins can dismiss false reports or resolve violations with custom notes, providing accountability documentation. 8. Configured real-time WebSocket connection hooks in the player page to join the video's chat room and render inbound chat feeds in a side console.
 
 STUDY SHEET: WEBSOCKET & PREMIER CONCEPT DEFINITIONS
 Q1: How does a WebSocket connection differ from a normal HTTP request/response?
@@ -359,4 +426,3 @@ Answer: Without room isolation, a message sent by a viewer on video A would be b
 
 Q3: Why authenticate WebSocket messages using JWT instead of cookies or session IDs?
 Answer: WebSockets do not have traditional HTTP request-response lifecycles, and standard cookie headers are often not accessible across different subprotocols or frameworks. By sending the user's JWT token inside the JSON payload of the message itself, we can run stateless token verification (`jwt.verify`) on every single incoming chat message, ensuring the sender is authorized without database overhead.
-

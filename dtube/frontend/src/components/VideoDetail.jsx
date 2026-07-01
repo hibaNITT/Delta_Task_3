@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import FlagCommentModal from "./FlagCommentModal";
+import FlagVideoModal from "./FlagVideoModal";
 import "../App.css";
 
 const VideoDetail = () => {
@@ -26,6 +28,13 @@ const VideoDetail = () => {
   const [ws, setWs] = useState(null);
   const [isPremierFuture, setIsPremierFuture] = useState(false);
   const [countdownText, setCountdownText] = useState("");
+
+  // Flag modal states
+  const [showFlagCommentModal, setShowFlagCommentModal] = useState(false);
+  const [showFlagVideoModal, setShowFlagVideoModal] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [flaggedComments, setFlaggedComments] = useState(new Set());
+  const [flaggedVideo, setFlaggedVideo] = useState(false);
 
   // Headers config for secure API requests
   const apiConfig = {
@@ -283,27 +292,45 @@ const VideoDetail = () => {
     );
 
   return (
-    <div className="video-detail-container" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div
+      className="video-detail-container"
+      style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+    >
       {/* Outer row wrapper holding Player/Countdown (left) and Live Chat (right) */}
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", alignItems: "stretch" }}>
-        
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          flexWrap: "wrap",
+          alignItems: "stretch",
+        }}
+      >
         {/* Left Side: Video Player or Countdown Banner */}
         <div style={{ flex: "2", minWidth: "300px" }}>
-          <div className="video-player-wrapper" style={{ backgroundColor: "#000", position: "relative" }}>
+          <div
+            className="video-player-wrapper"
+            style={{ backgroundColor: "#000", position: "relative" }}
+          >
             {isPremierFuture ? (
               // Countdown Display for Future Scheduled Premiere
-              <div style={{
-                height: "400px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#fff",
-                backgroundColor: "#111",
-                fontFamily: "monospace"
-              }}>
-                <h2 style={{ color: "#e50914", margin: "0 0 10px 0" }}>LIVE PREMIER COUNTDOWN</h2>
-                <div style={{ fontSize: "3rem", fontWeight: "bold" }}>{countdownText}</div>
+              <div
+                style={{
+                  height: "400px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "#fff",
+                  backgroundColor: "#111",
+                  fontFamily: "monospace",
+                }}
+              >
+                <h2 style={{ color: "#e50914", margin: "0 0 10px 0" }}>
+                  LIVE PREMIER COUNTDOWN
+                </h2>
+                <div style={{ fontSize: "3rem", fontWeight: "bold" }}>
+                  {countdownText}
+                </div>
                 <p style={{ marginTop: "15px", color: "#aaa" }}>
                   Premiering on {new Date(video.premierTime).toLocaleString()}
                 </p>
@@ -323,57 +350,81 @@ const VideoDetail = () => {
 
         {/* Right Side: Live Chat Sidebar (Only visible for Premiere videos) */}
         {video.isPremier && (
-          <div style={{
-            flex: "1",
-            minWidth: "280px",
-            border: "1px solid #333",
-            backgroundColor: "#1a1a1a",
-            color: "#fff",
-            borderRadius: "6px",
-            display: "flex",
-            flexDirection: "column",
-            height: isPremierFuture ? "400px" : "550px",
-            maxHeight: "550px",
-            justifyContent: "space-between"
-          }}>
+          <div
+            style={{
+              flex: "1",
+              minWidth: "280px",
+              border: "1px solid #333",
+              backgroundColor: "#1a1a1a",
+              color: "#fff",
+              borderRadius: "6px",
+              display: "flex",
+              flexDirection: "column",
+              height: isPremierFuture ? "400px" : "550px",
+              maxHeight: "550px",
+              justifyContent: "space-between",
+            }}
+          >
             {/* Header */}
-            <div style={{
-              padding: "10px",
-              borderBottom: "1px solid #333",
-              backgroundColor: "#222",
-              textAlign: "center",
-              fontWeight: "bold",
-              color: "#e50914"
-            }}>
+            <div
+              style={{
+                padding: "10px",
+                borderBottom: "1px solid #333",
+                backgroundColor: "#222",
+                textAlign: "center",
+                fontWeight: "bold",
+                color: "#e50914",
+              }}
+            >
               🔴 LIVE CHAT
             </div>
 
             {/* Chat Messages Log */}
-            <div style={{
-              padding: "10px",
-              flex: "1",
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px"
-            }}>
+            <div
+              style={{
+                padding: "10px",
+                flex: "1",
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}
+            >
               {chatMessages.map((msg, index) => (
                 <div key={index} style={{ fontSize: "0.9rem" }}>
-                  <span style={{ color: "#4285F4", fontWeight: "bold" }}>@{msg.username}</span>:{" "}
-                  <span>{msg.text}</span>
+                  <span style={{ color: "#4285F4", fontWeight: "bold" }}>
+                    @{msg.username}
+                  </span>
+                  : <span>{msg.text}</span>
                 </div>
               ))}
               {chatMessages.length === 0 && (
-                <div style={{ color: "#777", textAlign: "center", fontStyle: "italic", marginTop: "20px" }}>
+                <div
+                  style={{
+                    color: "#777",
+                    textAlign: "center",
+                    fontStyle: "italic",
+                    marginTop: "20px",
+                  }}
+                >
                   Welcome to Live Chat! Say hello...
                 </div>
               )}
             </div>
 
             {/* Inbound Input Form controls */}
-            <div style={{ padding: "10px", borderTop: "1px solid #333", backgroundColor: "#222" }}>
+            <div
+              style={{
+                padding: "10px",
+                borderTop: "1px solid #333",
+                backgroundColor: "#222",
+              }}
+            >
               {token ? (
-                <form onSubmit={handleSendChatMessage} style={{ display: "flex", gap: "5px" }}>
+                <form
+                  onSubmit={handleSendChatMessage}
+                  style={{ display: "flex", gap: "5px" }}
+                >
                   <input
                     type="text"
                     placeholder="Chat..."
@@ -385,24 +436,37 @@ const VideoDetail = () => {
                       borderRadius: "4px",
                       border: "1px solid #444",
                       backgroundColor: "#333",
-                      color: "#fff"
+                      color: "#fff",
                     }}
                   />
-                  <button type="submit" style={{
-                    padding: "8px 12px",
-                    backgroundColor: "#e50914",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold"
-                  }}>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "8px 12px",
+                      backgroundColor: "#e50914",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                    }}
+                  >
                     Send
                   </button>
                 </form>
               ) : (
-                <div style={{ fontSize: "0.85rem", color: "#aaa", textAlign: "center" }}>
-                  Please <Link to="/auth" style={{ color: "#4285F4" }}>login</Link> to participate in Live Chat.
+                <div
+                  style={{
+                    fontSize: "0.85rem",
+                    color: "#aaa",
+                    textAlign: "center",
+                  }}
+                >
+                  Please{" "}
+                  <Link to="/auth" style={{ color: "#4285F4" }}>
+                    login
+                  </Link>{" "}
+                  to participate in Live Chat.
                 </div>
               )}
             </div>
@@ -412,30 +476,34 @@ const VideoDetail = () => {
 
       {/* Video Title and Engagement row */}
       <h2>{video.title}</h2>
-      <div className="flex-row-space-between">
+      <div className="video-engagement-row">
         <span className="video-meta-text">
           {video.views || 0} views •{" "}
           {new Date(video.createdAt).toLocaleDateString()}
         </span>
-        <button
-          onClick={handleLikeToggle}
-          className={`like-btn ${isLiked ? "active" : "inactive"}`}
-        >
-          {isLiked ? "👍 Liked" : "👍 Like"} ({likeCount})
-        </button>
+        <div className="engagement-buttons">
+          <button
+            onClick={handleLikeToggle}
+            className={`like-btn ${isLiked ? "active" : "inactive"}`}
+          >
+            {isLiked ? "👍 Liked" : "👍 Like"} ({likeCount})
+          </button>
+          {token && (
+            <button
+              onClick={() => setShowFlagVideoModal(true)}
+              className="flag-video-btn"
+              disabled={flaggedVideo}
+            >
+              {flaggedVideo ? "✓ Reported" : "🚩 Report Video"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Channel Information Profile row */}
-      <div
-        className="flex-row-space-between"
-        style={{
-          marginTop: "20px",
-          borderTop: "1px solid #eee",
-          paddingTop: "10px",
-        }}
-      >
+      <div className="channel-info-row">
         <div>
-          <h4 style={{ margin: "0 0 5px 0" }}>
+          <h4 className="channel-name">
             Channel: {video.uploader?.username || "Unknown Creator"}
           </h4>
           <span className="placeholder-text">{subCount} subscribers</span>
@@ -453,20 +521,12 @@ const VideoDetail = () => {
       </div>
 
       {/* Description Box */}
-      <div
-        className="description-box"
-        style={{
-          marginTop: "15px",
-          padding: "15px",
-          backgroundColor: "#f9f9f9",
-          borderRadius: "5px",
-        }}
-      >
+      <div className="description-box">
         <p>{video.description || "No description provided."}</p>
       </div>
 
       {/* Comments Section */}
-      <div className="comments-section" style={{ marginTop: "30px" }}>
+      <div className="comments-section">
         <h3>Comments ({comments.length})</h3>
 
         {/* Comment input form display wrapper toggled by user authentication state */}
@@ -491,7 +551,7 @@ const VideoDetail = () => {
         )}
 
         {/* Comments Stream Feed lists mapping loop */}
-        <div className="comment-stack" style={{ marginTop: "20px" }}>
+        <div className="comment-stack">
           {comments.map((comment) => (
             <div
               key={comment._id}
@@ -499,49 +559,83 @@ const VideoDetail = () => {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                padding: "10px 0",
-                borderBottom: "1px solid #f1f1f1",
               }}
             >
               <div>
                 <strong className="comment-author">
                   @{comment.uploader?.username || "User"}
                 </strong>
-                <p className="comment-text" style={{ margin: "5px 0 0 0" }}>
-                  {comment.text}
-                </p>
+                <p className="comment-text">{comment.text}</p>
               </div>
 
-              {/* Show delete action only if user is author or an admin */}
-              {user &&
-                (comment.uploader?._id === (user.userId || user._id) ||
-                  user.role === "admin") && (
+              {/* Show delete and flag actions */}
+              <div className="comment-actions">
+                {user &&
+                  (comment.uploader?._id === (user.userId || user._id) ||
+                    user.role === "admin") && (
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="comment-delete-btn"
+                    >
+                      Delete
+                    </button>
+                  )}
+                {token && !flaggedComments.has(comment._id) && (
                   <button
-                    onClick={() => handleDeleteComment(comment._id)}
-                    className="comment-delete-btn"
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "red",
-                      cursor: "pointer",
+                    onClick={() => {
+                      setSelectedCommentId(comment._id);
+                      setShowFlagCommentModal(true);
                     }}
+                    className="comment-flag-btn"
                   >
-                    Delete
+                    🚩 Flag
                   </button>
                 )}
+                {flaggedComments.has(comment._id) && (
+                  <span className="comment-flagged-badge">✓ Flagged</span>
+                )}
+              </div>
             </div>
           ))}
 
           {comments.length === 0 && (
-            <p
-              className="placeholder-text"
-              style={{ color: "#888", fontStyle: "italic", marginTop: "15px" }}
-            >
+            <p className="placeholder-text">
               No comments posted yet. Be the first!
             </p>
           )}
         </div>
       </div>
+
+      {/* Flag Modals */}
+      {showFlagCommentModal && selectedCommentId && (
+        <FlagCommentModal
+          commentId={selectedCommentId}
+          onClose={() => {
+            setShowFlagCommentModal(false);
+            setSelectedCommentId(null);
+          }}
+          onSuccess={() => {
+            alert("Comment reported successfully");
+            setFlaggedComments(
+              new Set([...flaggedComments, selectedCommentId]),
+            );
+            setShowFlagCommentModal(false);
+            setSelectedCommentId(null);
+          }}
+        />
+      )}
+
+      {showFlagVideoModal && (
+        <FlagVideoModal
+          videoId={id}
+          onClose={() => setShowFlagVideoModal(false)}
+          onSuccess={() => {
+            alert("Video reported successfully");
+            setFlaggedVideo(true);
+            setShowFlagVideoModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };

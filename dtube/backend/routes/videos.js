@@ -5,9 +5,9 @@ const isAdmin = require("../middleware/isAdmin"); // Check your filename
 
 const multer = require("multer");
 const path = require("path");
-const Video = require("../models/Video");
+const Video = require("../models/video");
 
-const Comment = require("../models/Comment");
+const Comment = require("../models/comment");
 
 const User = require("../models/user");
 

@@ -14,6 +14,7 @@ import Login from "./components/login";
 import SignUp from "./components/signUp";
 
 import CategoryTreeMap from "./components/CategoryTreeMap";
+import AdminPanel from "./components/AdminPanel";
 
 import CreatorChannel from "./components/CreatorChannel";
 
@@ -130,7 +131,9 @@ const AuthPage = ({
           </button>
         </form>
 
-        <div style={{ margin: "15px 0", textAlign: "center", color: "#888" }}>OR</div>
+        <div style={{ margin: "15px 0", textAlign: "center", color: "#888" }}>
+          OR
+        </div>
 
         {/* Hand-rolled Google Sign In button added directly to the account page */}
         <a
@@ -310,6 +313,7 @@ const MainDashboard = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<CategoryTreeMap />} />
+          <Route path="/admin/reports" element={<AdminPanel />} />
           <Route path="/user/:username" element={<CreatorChannel />} />
 
           <Route path="/trending" element={<Trending />} />

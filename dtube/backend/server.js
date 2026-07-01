@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const videoRoutes = require("./routes/videos");
 const analyticsRoutes = require("./routes/analytics");
+const flagRoutes = require("./routes/flags");
 
 // Imports Cross-Origin Resource Sharing (CORS). This is a security feature helper; it allows our React frontend which is running on a different port to talk to this
 // backend port without being blocked by the browser.
@@ -36,6 +37,9 @@ app.use("/api/videos", videoRoutes);
 
 // mounting analytics routes
 app.use("/api/analytics", analyticsRoutes);
+
+// mounting flags routes
+app.use("/api/flags", flagRoutes);
 
 // mounting user profile viewoing route
 app.use("/api/users", require("./routes/videos"));
@@ -85,14 +89,14 @@ wss.on("connection", (ws) => {
       if (message.type === "join") {
         const { videoId } = message;
         currentVideoId = videoId;
-        
+
         if (!rooms.has(videoId)) {
           rooms.set(videoId, new Set());
         }
         rooms.get(videoId).add(ws);
         console.log(`User joined chat room for video: ${videoId}`);
-      } 
-      
+      }
+
       // Handle user sending a chat message
       else if (message.type === "message") {
         const { videoId, text, token } = message;
@@ -102,9 +106,9 @@ wss.on("connection", (ws) => {
         try {
           const decoded = jwt.verify(
             token,
-            process.env.DTUBE_CONSTELLATION_Conspiracy_SECRET
+            process.env.DTUBE_CONSTELLATION_Conspiracy_SECRET,
           );
-          
+
           // Fetch the user's details to get their username
           const user = await User.findById(decoded.userId);
           if (!user) return;
@@ -122,14 +126,20 @@ wss.on("connection", (ws) => {
           if (roomConnections) {
             const payloadStr = JSON.stringify(chatPayload);
             roomConnections.forEach((client) => {
-              if (client.readyState === 1) { // 1 means OPEN
+              if (client.readyState === 1) {
+                // 1 means OPEN
                 client.send(payloadStr);
               }
             });
           }
         } catch (err) {
           console.error("WebSocket JWT verification failed:", err.message);
-          ws.send(JSON.stringify({ type: "error", message: "Invalid authentication token." }));
+          ws.send(
+            JSON.stringify({
+              type: "error",
+              message: "Invalid authentication token.",
+            }),
+          );
         }
       }
     } catch (err) {
