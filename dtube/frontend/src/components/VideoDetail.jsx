@@ -482,7 +482,7 @@ const VideoDetail = () => {
           </form>
         ) : (
           <p className="placeholder-text">
-            Please <Link to="/login">login</Link> to add your input or interact
+            Please <Link to="/auth">login</Link> to add your input or interact
             with this video.
           </p>
         )}

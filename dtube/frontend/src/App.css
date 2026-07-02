@@ -622,7 +622,8 @@ button:disabled {
 }
 
 /* Google sign-in */
-.google-signin-btn {
+.google-signin-btn,
+.dauth-signin-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -642,6 +643,17 @@ button:disabled {
 }
 .google-signin-btn:hover {
   background-color: #b7ddda;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.dauth-signin-btn {
+  margin-top: var(--space-1);
+  background-color: var(--accent);
+}
+
+.dauth-signin-btn:hover {
+  background-color: var(--accent-hover);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
 }

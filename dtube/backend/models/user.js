@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema(
 
     authProvider: {
       type: String,
-      enum: ["manual", "google"],
+      enum: ["manual", "google", "dauth"],
       default: "manual",
     },
     password: {

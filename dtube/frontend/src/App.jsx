@@ -5,12 +5,11 @@ import Navbar from "./components/Navbar";
 import "./App.css";
 
 // for video features
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import VideoFeed from "./components/VideoFeed";
 import UploadVideo from "./components/UploadVideo";
 import VideoDetail from "./components/VideoDetail";
 
-import Login from "./components/login";
 import SignUp from "./components/signUp";
 
 import CategoryTreeMap from "./components/CategoryTreeMap";
@@ -116,6 +115,12 @@ const AuthPage = ({
         >
           Sign in with Google
         </a>
+        <a
+          href="http://localhost:5000/api/auth/dauth/start"
+          className="dauth-signin-btn"
+        >
+          Sign in with DAuth
+        </a>
       </div>
     </div>
   );
@@ -142,7 +147,7 @@ const MainDashboard = () => {
   });
 
   useEffect(() => {
-    // Check if we were redirected from Google with query parameters (token, username, etc.)
+    // Check if we were redirected from an OAuth provider with query parameters.
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get("token");
 
@@ -152,6 +157,7 @@ const MainDashboard = () => {
       const urlEmail = params.get("email");
       const urlRole = params.get("role");
       const urlIsPro = params.get("isPro") === "true";
+      const provider = params.get("provider") || "OAuth";
 
       // Reconstruct user object
       const userData = {
@@ -164,7 +170,7 @@ const MainDashboard = () => {
 
       // Save user session globally
       login(userData, urlToken);
-      alert("Logged in with Google successfully!");
+      alert(`Logged in with ${provider} successfully!`);
 
       // Hard redirect to home to clear query parameters and prevent loop issues
       window.location.href = "/";
@@ -272,7 +278,7 @@ const MainDashboard = () => {
           {/* FIXED: Direct, clean component injection */}
           <Route path="/videos/:id" element={<VideoDetail />} />
 
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Navigate to="/auth" replace />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<CategoryTreeMap />} />
           <Route path="/admin/reports" element={<AdminPanel />} />
