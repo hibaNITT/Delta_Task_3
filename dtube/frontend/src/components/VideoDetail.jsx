@@ -309,29 +309,15 @@ const VideoDetail = () => {
         <div style={{ flex: "2", minWidth: "300px" }}>
           <div
             className="video-player-wrapper"
-            style={{ backgroundColor: "#000", position: "relative" }}
           >
             {isPremierFuture ? (
               // Countdown Display for Future Scheduled Premiere
-              <div
-                style={{
-                  height: "400px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#fff",
-                  backgroundColor: "#111",
-                  fontFamily: "monospace",
-                }}
-              >
-                <h2 style={{ color: "#e50914", margin: "0 0 10px 0" }}>
-                  LIVE PREMIER COUNTDOWN
-                </h2>
-                <div style={{ fontSize: "3rem", fontWeight: "bold" }}>
+              <div className="premiere-countdown">
+                <h2>Live Premier Countdown</h2>
+                <div className="premiere-countdown-timer">
                   {countdownText}
                 </div>
-                <p style={{ marginTop: "15px", color: "#aaa" }}>
+                <p className="premiere-countdown-label">
                   Premiering on {new Date(video.premierTime).toLocaleString()}
                 </p>
               </div>
@@ -342,7 +328,7 @@ const VideoDetail = () => {
                 crossOrigin="anonymous"
                 controls
                 autoPlay
-                style={{ width: "100%", maxHeight: "550px", display: "block" }}
+                className="video-player"
               />
             )}
           </div>
@@ -350,76 +336,27 @@ const VideoDetail = () => {
 
         {/* Right Side: Live Chat Sidebar (Only visible for Premiere videos) */}
         {video.isPremier && (
-          <div
-            style={{
-              flex: "1",
-              minWidth: "280px",
-              border: "1px solid #333",
-              backgroundColor: "#1a1a1a",
-              color: "#fff",
-              borderRadius: "6px",
-              display: "flex",
-              flexDirection: "column",
-              height: isPremierFuture ? "400px" : "550px",
-              maxHeight: "550px",
-              justifyContent: "space-between",
-            }}
-          >
+          <div className="live-chat-sidebar">
             {/* Header */}
-            <div
-              style={{
-                padding: "10px",
-                borderBottom: "1px solid #333",
-                backgroundColor: "#222",
-                textAlign: "center",
-                fontWeight: "bold",
-                color: "#e50914",
-              }}
-            >
-              🔴 LIVE CHAT
-            </div>
+            <div className="live-chat-header">🔴 LIVE CHAT</div>
 
             {/* Chat Messages Log */}
-            <div
-              style={{
-                padding: "10px",
-                flex: "1",
-                overflowY: "auto",
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-              }}
-            >
+            <div className="live-chat-messages">
               {chatMessages.map((msg, index) => (
-                <div key={index} style={{ fontSize: "0.9rem" }}>
-                  <span style={{ color: "#4285F4", fontWeight: "bold" }}>
-                    @{msg.username}
-                  </span>
+                <div key={index} className="live-chat-message">
+                  <span className="chat-username">@{msg.username}</span>
                   : <span>{msg.text}</span>
                 </div>
               ))}
               {chatMessages.length === 0 && (
-                <div
-                  style={{
-                    color: "#777",
-                    textAlign: "center",
-                    fontStyle: "italic",
-                    marginTop: "20px",
-                  }}
-                >
+                <div className="live-chat-empty">
                   Welcome to Live Chat! Say hello...
                 </div>
               )}
             </div>
 
             {/* Inbound Input Form controls */}
-            <div
-              style={{
-                padding: "10px",
-                borderTop: "1px solid #333",
-                backgroundColor: "#222",
-              }}
-            >
+            <div className="live-chat-footer">
               {token ? (
                 <form
                   onSubmit={handleSendChatMessage}

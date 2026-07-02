@@ -35,21 +35,9 @@ const AuthPage = ({
     <div className="auth-page-wrapper">
       {/* SIGNUP BOX */}
       <div className="auth-box">
-        <h3
-          style={{
-            margin: "0 0 15px 0",
-            color: "#ff0000",
-            borderBottom: "1px solid #333",
-            paddingBottom: "10px",
-          }}
-        >
-          Create Account
-        </h3>
+        <h3 className="auth-box-header signup">Create Account</h3>
         {signupStatus.message && (
-          <p
-            className="status-message"
-            style={{ color: signupStatus.isError ? "#f44336" : "#4caf50" }}
-          >
+          <p className={`status-message ${signupStatus.isError ? "error" : "success"}`}>
             {signupStatus.message}
           </p>
         )}
@@ -89,21 +77,9 @@ const AuthPage = ({
 
       {/* LOGIN BOX */}
       <div className="auth-box">
-        <h3
-          style={{
-            margin: "0 0 15px 0",
-            color: "#4caf50",
-            borderBottom: "1px solid #333",
-            paddingBottom: "10px",
-          }}
-        >
-          Sign In
-        </h3>
+        <h3 className="auth-box-header login">Sign In</h3>
         {loginStatus.message && (
-          <p
-            className="status-message"
-            style={{ color: loginStatus.isError ? "#f44336" : "#4caf50" }}
-          >
+          <p className={`status-message ${loginStatus.isError ? "error" : "success"}`}>
             {loginStatus.message}
           </p>
         )}
@@ -131,24 +107,12 @@ const AuthPage = ({
           </button>
         </form>
 
-        <div style={{ margin: "15px 0", textAlign: "center", color: "#888" }}>
-          OR
-        </div>
+        <div className="auth-divider">OR</div>
 
         {/* Hand-rolled Google Sign In button added directly to the account page */}
         <a
           href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
           className="google-signin-btn"
-          style={{
-            display: "block",
-            textAlign: "center",
-            padding: "10px",
-            backgroundColor: "#4285F4",
-            color: "white",
-            textDecoration: "none",
-            borderRadius: "4px",
-            fontWeight: "bold",
-          }}
         >
           Sign in with Google
         </a>
@@ -281,9 +245,7 @@ const MainDashboard = () => {
         {/* System status display indicator strip */}
         <div className="health-strip">
           <span>Backend Status: </span>
-          <strong
-            style={{ color: healthStatus === "ok" ? "#4caf50" : "#f44336" }}
-          >
+          <strong className={healthStatus === "ok" ? "health-ok" : "health-error"}>
             {healthStatus}
           </strong>
         </div>
