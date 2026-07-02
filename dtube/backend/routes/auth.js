@@ -6,6 +6,7 @@ const { signup, login } = require("../controllers/authController");
 const crypto = require("crypto");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const authMiddleware = require("../middleware/auth");
 
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
@@ -84,6 +85,38 @@ const signAppToken = (user) =>
 
 router.post("/signup", signup);
 router.post("/login", login);
+
+// DTube Pro: mock monthly subscription endpoint.
+router.post("/pro/subscribe", authMiddleware, async (req, res) => {
+  try {
+    const proExpiresAt = new Date();
+    proExpiresAt.setMonth(proExpiresAt.getMonth() + 1);
+
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { isPro: true, proExpiresAt },
+      { new: true },
+    ).select("_id username email role isPro proExpiresAt");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({
+      message: "DTube Pro activated for one month.",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        isPro: user.isPro,
+        proExpiresAt: user.proExpiresAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Could not activate DTube Pro." });
+  }
+});
 
 // DAUTH AUTH
 

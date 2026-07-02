@@ -19,6 +19,40 @@ import CreatorChannel from "./components/CreatorChannel";
 
 import Trending from "./components/Trending";
 
+const BannerAd = ({ user, token, updateUser }) => {
+  if (user?.isPro) return null;
+
+  const activatePro = async () => {
+    if (!token) {
+      window.location.href = "/auth";
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/pro/subscribe",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      updateUser(res.data.user);
+      alert("DTube Pro activated. Ads are now hidden.");
+    } catch (err) {
+      alert(err.response?.data?.message || "Could not activate DTube Pro.");
+    }
+  };
+
+  return (
+    <div className="banner-ad">
+      <span className="banner-ad-label">Ad</span>
+      <strong>DTube Pro</strong>
+      <span>Watch without banner ads for one month.</span>
+      <button type="button" onClick={activatePro}>
+        Go Pro
+      </button>
+    </div>
+  );
+};
+
 //login and signup forms
 const AuthPage = ({
   signupData,
@@ -127,7 +161,7 @@ const AuthPage = ({
 };
 
 const MainDashboard = () => {
-  const { login, token } = useContext(AuthContext);
+  const { login, token, user, updateUser } = useContext(AuthContext);
   const [healthStatus, setHealthStatus] = useState("Connecting to backend...");
 
   const [signupData, setSignupData] = useState({
@@ -255,6 +289,8 @@ const MainDashboard = () => {
             {healthStatus}
           </strong>
         </div>
+
+        <BannerAd user={user} token={token} updateUser={updateUser} />
 
         <Routes>
           <Route path="/" element={<VideoFeed />} />
