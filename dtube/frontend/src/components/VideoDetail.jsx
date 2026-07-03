@@ -67,30 +67,23 @@ const VideoDetail = () => {
         );
         setComments(commentsResponse.data);
 
-        // Fetch creator profile for subscriber tracking
-        if (videoData.uploader?._id) {
-          try {
-            const channelResponse = await axios.get(
-              `http://localhost:5000/api/users/${videoData.uploader._id}`,
-            );
-            setSubCount(channelResponse.data.subscribers?.length || 0);
+        // FIX: Extract subscriber data directly from the video response payload
+        if (videoData.uploader?.subscribers) {
+          const currentSubscribers = videoData.uploader.subscribers;
+          setSubCount(currentSubscribers.length);
 
-            // Check if user is already subscribed
-            if (user && channelResponse.data.subscribers) {
-              const currentUserId = user.userId || user._id;
-              setIsSubscribed(
-                channelResponse.data.subscribers.includes(currentUserId),
-              );
-            }
-          } catch (userErr) {
-            console.warn(
-              "User profile route /api/users/:id returned a 404. Bypassing safely:",
-              userErr,
+          if (user) {
+            const currentUserId = user.userId || user._id;
+            // Establish real initial subscription check
+            setIsSubscribed(
+              currentSubscribers
+                .map((uid) => uid.toString())
+                .includes(currentUserId.toString()),
             );
-            // Safe fallback defaults so the rest of the layout loads fine
-            setSubCount(0);
-            setIsSubscribed(false);
           }
+        } else {
+          setSubCount(0);
+          setIsSubscribed(false);
         }
 
         setLoading(false);
@@ -224,7 +217,7 @@ const VideoDetail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/users/${video.uploader._id}/subscribe`,
+        `http://localhost:5000/api/videos/${video.uploader._id}/subscribe`,
         {},
         apiConfig,
       );
@@ -307,16 +300,12 @@ const VideoDetail = () => {
       >
         {/* Left Side: Video Player or Countdown Banner */}
         <div style={{ flex: "2", minWidth: "300px" }}>
-          <div
-            className="video-player-wrapper"
-          >
+          <div className="video-player-wrapper">
             {isPremierFuture ? (
               // Countdown Display for Future Scheduled Premiere
               <div className="premiere-countdown">
                 <h2>Live Premier Countdown</h2>
-                <div className="premiere-countdown-timer">
-                  {countdownText}
-                </div>
+                <div className="premiere-countdown-timer">{countdownText}</div>
                 <p className="premiere-countdown-label">
                   Premiering on {new Date(video.premierTime).toLocaleString()}
                 </p>
@@ -344,8 +333,8 @@ const VideoDetail = () => {
             <div className="live-chat-messages">
               {chatMessages.map((msg, index) => (
                 <div key={index} className="live-chat-message">
-                  <span className="chat-username">@{msg.username}</span>
-                  : <span>{msg.text}</span>
+                  <span className="chat-username">@{msg.username}</span>:{" "}
+                  <span>{msg.text}</span>
                 </div>
               ))}
               {chatMessages.length === 0 && (
@@ -445,14 +434,13 @@ const VideoDetail = () => {
           </h4>
           <span className="placeholder-text">{subCount} subscribers</span>
         </div>
-
-        {/* Show Subscribe button only if visiting another user's channel video */}
+        {/* Show Subscribe/Unsubscribe button only if visiting another user's channel video */}
         {user && video.uploader?._id !== (user.userId || user._id) && (
           <button
             onClick={handleSubscribeToggle}
-            className={`subscribe-btn ${isSubscribed ? "active" : "inactive"}`}
+            className={`subscribe-btn ${isSubscribed ? "subscribed" : "unsubscribed"}`}
           >
-            {isSubscribed ? "Subscribed" : "Subscribe"}
+            {isSubscribed ? "Unsubscribe" : "Subscribe"}
           </button>
         )}
       </div>

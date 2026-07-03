@@ -137,14 +137,15 @@ router.delete("/moderate/:id", auth, isAdmin, async (req, res) => {
     });
   }
 });
-
 // GET SINGLE VIDEO BY ID
 // GET http://localhost:5000/api/videos/:id
+
 router.get("/:id", async (req, res) => {
   try {
+    // FIX: Added 'subscribers' to the populate configuration string
     const video = await Video.findById(req.params.id).populate(
       "uploader",
-      "username email",
+      "username email subscribers",
     );
     if (!video) {
       return res.status(404).json({ message: "Video not found." });
@@ -370,6 +371,60 @@ router.get("/profile/:username", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error fetching channel aggregation layout",
+      error: error.message,
+    });
+  }
+});
+
+//  For subscribe option
+// POST Toggle Subscribe / Unsubscribe
+// URL: http://localhost:5000/api/videos/:id/subscribe
+router.post("/:id/subscribe", auth, async (req, res) => {
+  try {
+    const creatorToSubscribe = await User.findById(req.params.id);
+    if (!creatorToSubscribe) {
+      return res.status(404).json({ message: "Creator user not found." });
+    }
+
+    const currentUserId = req.user.userId || req.user._id;
+
+    // Guard: Prevent a user from subscribing to themselves
+    if (creatorToSubscribe._id.toString() === currentUserId.toString()) {
+      return res
+        .status(400)
+        .json({ message: "You cannot subscribe to your own channel." });
+    }
+
+    if (!creatorToSubscribe.subscribers) {
+      creatorToSubscribe.subscribers = [];
+    }
+
+    // FIX: Convert ObjectIds to strings to accurately verify if the user exists in the array
+    const isAlreadySubscribed = creatorToSubscribe.subscribers
+      .map((id) => id.toString())
+      .includes(currentUserId.toString());
+
+    if (isAlreadySubscribed) {
+      // 1. UNSUBSCRIBE ACTION: Remove user ID from array and return false
+      await User.findByIdAndUpdate(req.params.id, {
+        $pull: { subscribers: currentUserId },
+      });
+      return res
+        .status(200)
+        .json({ message: "Unsubscribed successfully.", subscribed: false });
+    } else {
+      // 2. SUBSCRIBE ACTION: Add user ID to array and return true (Only 1 entry ever recorded per account)
+      await User.findByIdAndUpdate(req.params.id, {
+        $addToSet: { subscribers: currentUserId },
+      });
+      return res
+        .status(200)
+        .json({ message: "Subscribed successfully.", subscribed: true });
+    }
+  } catch (error) {
+    console.error("Subscription toggle error:", error);
+    res.status(500).json({
+      message: "Server error updating subscription status.",
       error: error.message,
     });
   }

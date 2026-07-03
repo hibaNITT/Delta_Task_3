@@ -910,35 +910,38 @@ button:disabled {
 }
 
 /* Subscribe button */
+/* Base styling for the subscription button */
 .subscribe-btn {
-  padding: 9px var(--space-3);
-  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 4px;
   border: none;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
   cursor: pointer;
-  transition:
-    background-color var(--transition),
-    box-shadow var(--transition);
+  transition: all 0.3s ease;
 }
 
-.subscribe-btn.active {
-  background-color: var(--bg-subtle);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-}
-.subscribe-btn.active:hover {
-  background-color: var(--bg-page);
+/* State 1: When NOT subscribed (Prominent Action) */
+.subscribe-btn.unsubscribed {
+  background-color: #e50914; /* Red */
+  color: white;
 }
 
-.subscribe-btn.inactive {
-  background-color: var(--p-deep-red);
-  color: var(--text-inverse);
+.subscribe-btn.unsubscribed:hover {
+  background-color: #b80710;
 }
-.subscribe-btn.inactive:hover {
-  background-color: var(--accent-hover);
-  box-shadow: var(--shadow-sm);
+
+/* State 2: When ALREADY subscribed (Muted styling) */
+.subscribe-btn.subscribed {
+  background-color: #333333; /* Dark Grey */
+  color: #aaaaaa;
+  border: 1px solid #555555;
+}
+
+/* Hovering over the subscribed button turns it into an explicit Unsubscribe prompt */
+.subscribe-btn.subscribed:hover {
+  background-color: #cc0000; /* Distinct red warning on hover */
+  color: white;
+  content: "Unsubscribe"; /* Optional semantic helper depending on layout */
 }
 
 /* Flag video button */
