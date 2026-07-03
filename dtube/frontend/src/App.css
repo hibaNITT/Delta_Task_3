@@ -1,16 +1,8 @@
 /* ============================================================
    DTUBE — App.css
    Component-level styles — "Basic but Classic" aesthetic
-   All colours, spacing, and radii come from CSS tokens in index.css
+   All colours, spacing, and radii come from CSS tokens
    ============================================================ */
-
-/* color palette
-   
---verdigris:    #75B9BF;
---light-blue:   #B7DDDA;
---alabaster:    #F2ECE1;
---misty-rose:   #FCDDD3;
---pale-dogwood: #E6C4B7; */
 
 /* ============================================================
    PREMIERE / LIVE CHAT SIDEBAR
@@ -190,7 +182,7 @@
    NAVBAR
    ============================================================ */
 .navbar {
-  background-color: var(--bg-card);
+  background-color: var(--p-moss);
   border-bottom: 1px solid var(--border);
   padding: var(--space-2) var(--space-4);
   display: flex;
@@ -205,7 +197,7 @@
 .navbar-brand {
   font-size: 1.375rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--p-cream);
   letter-spacing: -0.03em;
   text-decoration: none;
   transition: color var(--transition);
@@ -224,18 +216,18 @@
 
 .navbar-user span {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--p-cream);
 }
 
 .navbar-user strong {
-  color: var(--text-primary);
+  color: var(--p-cream);
 }
 
 /* ── Sign Out Button (Navbar) ─────────────────────────────── */
 .btn-signout {
   padding: 7px var(--space-2);
-  background-color: transparent;
-  color: var(--danger);
+  background-color: var(--p-deep-red);
+  color: var(--p-cream);
   border: 1px solid var(--danger);
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
@@ -325,7 +317,7 @@
   justify-content: center;
   gap: var(--space-1);
   padding: 10px var(--space-3);
-  background-color: var(--p-misty-rose);
+  background-color: var(--p-cream);
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 0.9rem;
@@ -400,7 +392,7 @@
 }
 .btn-secondary:hover {
   background-color: var(--bg-subtle);
-  border-color: #e6c4b7;
+  border-color: var(--border);
 }
 
 /* Danger */
@@ -410,7 +402,8 @@
   border-color: var(--danger);
 }
 .btn-danger:hover {
-  background-color: #a61f1f;
+  background-color: var(--p-deep-red);
+  border-color: var(--p-deep-red);
   box-shadow: var(--shadow-sm);
 }
 
@@ -628,7 +621,7 @@ button:disabled {
   color: var(--text-inverse);
 }
 .btn-login:hover {
-  background-color: #75b9bf;
+  background-color: var(--accent-hover);
   box-shadow: var(--shadow-sm);
 }
 
@@ -666,7 +659,7 @@ button:disabled {
   gap: var(--space-1);
   width: 100%;
   padding: 11px;
-  background-color: #dd8181;
+  background-color: var(--p-rust);
   color: var(--text-inverse);
   font-family: var(--font-sans);
   font-size: 0.9375rem;
@@ -678,7 +671,7 @@ button:disabled {
     box-shadow var(--transition);
 }
 .google-signin-btn:hover {
-  background-color: #b7ddda;
+  background-color: var(--p-deep-red);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
 }
@@ -738,7 +731,7 @@ button:disabled {
 
 .video-card:hover {
   box-shadow: var(--shadow-md);
-  border-color: #ced4da;
+  border-color: var(--border-focus);
   transform: translateY(-2px);
 }
 
@@ -905,7 +898,7 @@ button:disabled {
 .like-btn.active {
   background-color: var(--accent-light);
   color: var(--accent-text);
-  border-color: #a5b4fc;
+  border-color: var(--border);
 }
 
 .like-btn.inactive {
@@ -936,11 +929,11 @@ button:disabled {
   border: 1px solid var(--border);
 }
 .subscribe-btn.active:hover {
-  background-color: #f2ece1ef;
+  background-color: var(--bg-page);
 }
 
 .subscribe-btn.inactive {
-  background-color: rgb(223, 35, 35);
+  background-color: var(--p-deep-red);
   color: var(--text-inverse);
 }
 .subscribe-btn.inactive:hover {
@@ -1062,7 +1055,7 @@ button:disabled {
   cursor: pointer;
   font-weight: 600;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.9.rem;
   white-space: nowrap;
   transition:
     background-color var(--transition),
@@ -1185,16 +1178,12 @@ button:disabled {
 
 /* Banner */
 .channel-banner {
-  background: linear-gradient(
-    135deg,
-    var(--p-verdigris) 0%,
-    var(--p-light-teal) 100%
-  );
+  background: linear-gradient(135deg, var(--accent) 0%, var(--border) 100%);
   color: var(--text-inverse);
   padding: var(--space-6) var(--space-5);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-4);
-  border: 1px solid var(--p-verdigris);
+  border: 1px solid var(--accent);
 }
 
 .channel-title {
@@ -1209,7 +1198,7 @@ button:disabled {
   display: flex;
   gap: var(--space-3);
   font-size: 0.875rem;
-  color: #b7ddda;
+  color: var(--bg-page);
   flex-wrap: wrap;
 }
 
@@ -1257,7 +1246,7 @@ button:disabled {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(46, 58, 59, 0.5);
+  background-color: rgba(28, 30, 32, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1430,7 +1419,7 @@ button:disabled {
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  border: 1px solid var(--p-verdigris);
+  border: 1px solid var(--border-focus);
 }
 
 .flag-reason {
@@ -1733,8 +1722,8 @@ button:disabled {
 }
 
 .upload-toggle-row:hover {
-  background-color: var(--p-misty-rose);
-  border-color: var(--p-pale-dogwood);
+  background-color: var(--p-cream);
+  border-color: var(--border);
 }
 
 .upload-toggle-info {

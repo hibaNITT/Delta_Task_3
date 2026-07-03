@@ -1,60 +1,55 @@
-/* ============================================================
-   DTUBE — "Basic but Classic" Design System
-   Global Reset & Design Tokens
-   Palette: Verdigris #75B9BF · Light Teal #B7DDDA
-            Alabaster #F2ECE1 · Misty Rose #FCDDD3
-            Pale Dogwood #E6C4B7
-   ============================================================ */
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 /* ── Design Tokens ────────────────────────────────────────── */
+/* ── Design Tokens ────────────────────────────────────────── */
+/* ── Design Tokens ────────────────────────────────────────── */
 :root {
-  /* ── Palette primitives (reference only) ─────────────── */
-  --p-verdigris:    #75B9BF;   /* main teal accent                        */
-  --p-light-teal:   #B7DDDA;   /* secondary soft teal                     */
-  --p-cream:        #F2ECE1;   /* warm alabaster — page surface           */
-  --p-misty-rose:   #FCDDD3;   /* blush pink — warm highlights            */
-  --p-pale-dogwood: #E6C4B7;   /* muted rose-beige — borders              */
+  /* ── Palette primitives ─────────────────────────────────── */
+  --p-moss: #607456;
+  --p-cream: #eee0cc;
+  --p-rust: #ba6a4c;
+  --p-deep-red: #7b2525;
 
   /* ── Backgrounds ─────────────────────────────────────── */
-  --bg-page:   #F2ECE1;   /* Alabaster — main page surface              */
-  --bg-card:   #ffffff;   /* Pure white — elevated card surface         */
-  --bg-subtle: #faf6f0;   /* Warm off-white — inputs, stripes           */
-  --bg-nav:    #ffffff;   /* Navbar background                          */
+  --bg-page: #eee0cc; /* Cream page surface */
+  --bg-card: #ffffff;
+  --bg-subtle: #faf6f0;
+  --bg-nav: #ffffff;
 
   /* ── Text ────────────────────────────────────────────── */
-  --text-primary:   #2e3a3b;   /* Very dark teal-slate — body & headings */
-  --text-secondary: #6b7f80;   /* Muted teal-gray — timestamps, hints    */
-  --text-inverse:   #ffffff;   /* On dark / tinted surfaces              */
+  --text-primary: #1c1e20; /* Dark charcoal for high contrast readability */
+  --text-secondary: #607456; /* Moss green for subtext */
+  --text-inverse: #ffffff;
 
-  /* ── Accent (Verdigris) ──────────────────────────────── */
-  --accent:       #4fa8ae;   /* Darkened Verdigris — passes AA on white  */
-  --accent-hover: #3d9198;   /* Even darker on hover                     */
-  --accent-light: #B7DDDA;   /* Light Teal — badge / highlight bg        */
-  --accent-text:  #1c4a4e;   /* Dark teal — text on --accent-light bg    */
+  /* ── Accent ──────────────────────────────────────────── */
+  --accent: #607456; /* Moss green main accent */
+  --accent-hover: #4d5d45; /* Darker moss for hover states */
+  --accent-light: #eee0cc;
+  --accent-text: #4d5d45;
 
   /* ── Semantic ────────────────────────────────────────── */
-  --success:       #2f9e44;
+  --success: #2f9e44;
   --success-light: #ebfbee;
-  --danger:        #c92a2a;
-  --danger-light:  #fff5f5;
-  --warning:       #c96b1a;
+  --danger: #c92a2a;
+  --danger-light: #fff5f5;
+  --warning: #c96b1a;
   --warning-light: #fff3e8;
 
   /* ── Borders ─────────────────────────────────────────── */
-  --border:       #E6C4B7;   /* Pale Dogwood — structural dividers       */
-  --border-focus: #75B9BF;   /* Verdigris ring on :focus                 */
+  --border: #ba6a4c; /* Rust — clean, defined structural dividers */
+  --border-focus: #607456; /* Moss Green — indicator ring on :focus */
 
-  /* ── Focus glow (RGB of --border-focus for rgba use) ── */
-  --focus-glow: rgba(117, 185, 191, 0.22);
+  /* ── Focus glow (RGB of --border-focus: 96, 116, 86) ─── */
+  --focus-glow: rgba(96, 116, 86, 0.22);
 
-  /* ── Shadows (intentionally soft) ───────────────────── */
-  --shadow-xs: 0 1px 2px rgba(46, 58, 59, 0.04);
-  --shadow-sm: 0 1px 3px rgba(46, 58, 59, 0.07), 0 1px 2px rgba(46, 58, 59, 0.04);
-  --shadow-md: 0 4px 8px rgba(46, 58, 59, 0.07), 0 2px 4px rgba(46, 58, 59, 0.04);
+  /* ── Shadows ─────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(28, 30, 32, 0.04);
+  --shadow-sm:
+    0 1px 3px rgba(28, 30, 32, 0.07), 0 1px 2px rgba(28, 30, 32, 0.04);
+  --shadow-md:
+    0 4px 8px rgba(28, 30, 32, 0.07), 0 2px 4px rgba(28, 30, 32, 0.04);
 
-  /* ── Spacing (8 px grid) ─────────────────────────────── */
+  /* ── Spacing ─────────────────────────────────────────── */
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -69,14 +64,13 @@
 
   /* ── Typography ──────────────────────────────────────── */
   --font-sans:
-    "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, Consolas, "Courier New", monospace;
 
   /* ── Transitions ─────────────────────────────────────── */
   --transition: 0.18s ease;
 }
-
 /* ── Global Reset ─────────────────────────────────────────── */
 *,
 *::before,
@@ -105,7 +99,12 @@ body {
 }
 
 /* ── Typography Scale ─────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-sans);
   color: var(--text-primary);
   line-height: 1.25;
@@ -158,7 +157,8 @@ a:hover {
   text-decoration: underline;
 }
 
-strong, b {
+strong,
+b {
   font-weight: 600;
 }
 
@@ -177,7 +177,9 @@ small,
 }
 
 /* ── Code Blocks ──────────────────────────────────────────── */
-code, kbd, pre {
+code,
+kbd,
+pre {
   font-family: var(--font-mono);
   font-size: 0.875em;
   background-color: var(--p-misty-rose);
@@ -211,16 +213,34 @@ pre code {
   border: 0;
 }
 
-.text-muted   { color: var(--text-secondary); }
-.text-accent  { color: var(--accent); }
-.text-danger  { color: var(--danger); }
-.text-success { color: var(--success); }
+.text-muted {
+  color: var(--text-secondary);
+}
+.text-accent {
+  color: var(--accent);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-success {
+  color: var(--success);
+}
 
 /* ── Scrollbar ────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track  { background: var(--bg-page); }
-::-webkit-scrollbar-thumb  { background: var(--p-pale-dogwood); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--p-verdigris); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--p-pale-dogwood);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--p-verdigris);
+}
 
 /* ── Focus Ring ───────────────────────────────────────────── */
 :focus-visible {
