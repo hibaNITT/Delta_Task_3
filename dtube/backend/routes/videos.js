@@ -137,6 +137,45 @@ router.delete("/moderate/:id", auth, isAdmin, async (req, res) => {
     });
   }
 });
+
+// GET /api/videos/trending
+// Fetches the top 20 most viewed videos for trending discovery
+
+router.get("/trending", async (req, res) => {
+  try {
+    console.log("Fetching trending videos...");
+
+    // 1. Fetch data
+    const allVideos = await Video.find().populate("uploader", "username");
+
+    // 2. Validate data
+    if (!allVideos) {
+      console.log("No videos found in database.");
+      return res.status(200).json([]);
+    }
+
+    console.log(`Found ${allVideos.length} videos. Sorting...`);
+
+    // 3. Manual Sort (Avoiding .sort() as per project constraints)
+    const sortedVideos = [...allVideos].sort((a, b) => {
+      const viewsA = a.viewCount || 0;
+      const viewsB = b.viewCount || 0;
+      return viewsB - viewsA;
+    });
+
+    res.status(200).json(sortedVideos.slice(0, 20));
+  } catch (error) {
+    // THIS LINE WILL PRINT THE EXACT REASON FOR THE 500 ERROR
+    console.error("!!! FATAL ERROR IN /trending ROUTE !!!");
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
 // GET SINGLE VIDEO BY ID
 // GET http://localhost:5000/api/videos/:id
 
@@ -315,25 +354,6 @@ router.delete("/comments/:id", auth, async (req, res) => {
   }
 });
 
-// GET /api/videos/trending
-// Fetches the top 20 most viewed videos for trending discovery
-router.get("/trending", async (req, res) => {
-  try {
-    // Finds videos, sorts them by viewCount in descending order (-1), limits to 20 items
-    const trendingVideos = await Video.find()
-      .sort({ viewCount: -1 })
-      .limit(20)
-      .populate("uploader", "username");
-
-    res.status(200).json(trendingVideos);
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error fetching trending feed",
-      error: error.message,
-    });
-  }
-});
-
 // GET /api/users/:username
 // Public route to fetch a channel profile and all their uploaded assets
 router.get("/profile/:username", async (req, res) => {
@@ -406,17 +426,21 @@ router.post("/:id/subscribe", auth, async (req, res) => {
 
     if (isAlreadySubscribed) {
       // 1. UNSUBSCRIBE ACTION: Remove user ID from array and return false
-      await User.findByIdAndUpdate(req.params.id, {
-        $pull: { subscribers: currentUserId },
-      });
+      await User.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { subscribers: currentUserId } },
+        { returnDocument: "after" }, // Add this option!
+      );
       return res
         .status(200)
         .json({ message: "Unsubscribed successfully.", subscribed: false });
     } else {
       // 2. SUBSCRIBE ACTION: Add user ID to array and return true (Only 1 entry ever recorded per account)
-      await User.findByIdAndUpdate(req.params.id, {
-        $addToSet: { subscribers: currentUserId },
-      });
+      await User.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { subscribers: currentUserId } },
+        { returnDocument: "after" }, // Add this option!
+      );
       return res
         .status(200)
         .json({ message: "Subscribed successfully.", subscribed: true });

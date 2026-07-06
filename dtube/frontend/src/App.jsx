@@ -5,7 +5,13 @@ import Navbar from "./components/Navbar";
 import "./App.css";
 
 // for video features
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import VideoFeed from "./components/VideoFeed";
 import UploadVideo from "./components/UploadVideo";
 import VideoDetail from "./components/VideoDetail";
@@ -70,7 +76,9 @@ const AuthPage = ({
       <div className="auth-box">
         <h3 className="auth-box-header signup">Create Account</h3>
         {signupStatus.message && (
-          <p className={`status-message ${signupStatus.isError ? "error" : "success"}`}>
+          <p
+            className={`status-message ${signupStatus.isError ? "error" : "success"}`}
+          >
             {signupStatus.message}
           </p>
         )}
@@ -112,7 +120,9 @@ const AuthPage = ({
       <div className="auth-box">
         <h3 className="auth-box-header login">Sign In</h3>
         {loginStatus.message && (
-          <p className={`status-message ${loginStatus.isError ? "error" : "success"}`}>
+          <p
+            className={`status-message ${loginStatus.isError ? "error" : "success"}`}
+          >
             {loginStatus.message}
           </p>
         )}
@@ -271,6 +281,7 @@ const MainDashboard = () => {
           <Link to="/" className="nav-link">
             Home Feed
           </Link>
+          <Link to="/trending">Trending </Link>
           <Link to="/upload" className="nav-link">
             Upload Video
           </Link>
@@ -285,7 +296,9 @@ const MainDashboard = () => {
         {/* System status display indicator strip */}
         <div className="health-strip">
           <span>Backend Status: </span>
-          <strong className={healthStatus === "ok" ? "health-ok" : "health-error"}>
+          <strong
+            className={healthStatus === "ok" ? "health-ok" : "health-error"}
+          >
             {healthStatus}
           </strong>
         </div>
