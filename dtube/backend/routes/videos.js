@@ -14,7 +14,7 @@ const User = require("../models/user");
 // checking
 const { containsImproperText } = require("../utils/moderation");
 
-// VIDEO ROUTES AND UPLOAD CONFIGURATION =========================================
+// VIDEO ROUTES AND UPLOAD ============================================================
 
 // Configure where and how uploaded videos are stored locally
 const storage = multer.diskStorage({

@@ -1,12 +1,14 @@
+// this is just dummy data
+
 import React from "react";
 
 const CategoryTreeMap = () => {
   // Mock data tracking video categories and their relative counts
   const categories = [
-    { name: "Tech & Coding", count: 50, color: "#3B82F6" }, // Blue
-    { name: "Gaming", count: 30, color: "#10B981" }, // Green
-    { name: "Music & Audio", count: 15, color: "#F59E0B" }, // Orange
-    { name: "Vlogs", count: 5, color: "#EF4444" }, // Red
+    { name: "Tech & Coding", count: 50, color: "#617ead" }, // Blue
+    { name: "Gaming", count: 30, color: "#629b88" }, // Green
+    { name: "Music & Audio", count: 15, color: "#b4aa98" }, // Orange
+    { name: "Vlogs", count: 5, color: "#8d5980" }, // Red
   ];
 
   // Sum up all videos to calculate ratios..
