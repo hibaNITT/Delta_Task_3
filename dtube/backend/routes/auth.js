@@ -405,14 +405,19 @@ router.get("/google/callback", async (req, res) => {
     // This completes the loop and lets the React client extract the token securely.
     res.redirect(buildFrontendAuthRedirect(token, user, "Google"));
   } catch (error) {
-    console.error(
-      "OAuth Exchange Failure Error Details:",
-      error.response?.data || error.message,
-    );
+    const googleError = error.response?.data || error.message;
+    console.error("Google OAuth Exchange Failure:", googleError);
+
+    // Return the actual Google error so it's visible for debugging
+    const errorDetail =
+      typeof googleError === "object"
+        ? `${googleError.error}: ${googleError.error_description}`
+        : googleError;
+
     res
       .status(500)
       .send(
-        "Authentication handling failed due to upstream identity validation parameters.",
+        `Google authentication failed: ${errorDetail}. Callback URL used: ${GOOGLE_CALLBACK_URL}`,
       );
   }
 });
