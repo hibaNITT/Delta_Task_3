@@ -24,6 +24,7 @@ import AdminPanel from "./components/AdminPanel";
 import CreatorChannel from "./components/CreatorChannel";
 
 import Trending from "./components/Trending";
+import MyChannel from "./components/MyChannel";
 
 const BannerAd = ({ user, token, updateUser }) => {
   if (user?.isPro) return null;
@@ -281,10 +282,15 @@ const MainDashboard = () => {
           <Link to="/" className="nav-link">
             Home Feed
           </Link>
-          <Link to="/trending">Trending </Link>
+          <Link to="/trending" className="nav-link">Trending</Link>
           <Link to="/upload" className="nav-link">
             Upload Video
           </Link>
+          {user && (
+            <Link to="/my-channel" className="nav-link">
+              My Channel
+            </Link>
+          )}
           <Link to="/auth" className="nav-link">
             Account
           </Link>
@@ -334,6 +340,7 @@ const MainDashboard = () => {
           <Route path="/user/:username" element={<CreatorChannel />} />
 
           <Route path="/trending" element={<Trending />} />
+          <Route path="/my-channel" element={<MyChannel />} />
         </Routes>
       </div>
     </Router>
