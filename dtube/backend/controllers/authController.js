@@ -1,7 +1,7 @@
 // controller file to manage business logic for registration
 // and credential matching. We will use bcryptjs to securely hash incoming passwords and jsonwebtoken to sign tokens
 
-const User = require("../models/User");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 

@@ -67,6 +67,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(` Server running smoothly on port ${PORT}`);
 });
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 // WEBSOCKET NATIVE SERVER FOR LIVE CHAT PREMIERES
 const { WebSocketServer } = require("ws");
