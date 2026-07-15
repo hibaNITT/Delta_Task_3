@@ -51,7 +51,7 @@ const VideoDetail = () => {
 
         // Fetch video metadata
         const videoResponse = await axios.get(
-          `http://localhost:5000/api/videos/${id}`,
+          `https://dtube-api-2.onrender.com/api/videos/${id}`,
         );
         const videoData = videoResponse.data;
         setVideo(videoData);
@@ -65,7 +65,7 @@ const VideoDetail = () => {
 
         //Fetch video comments
         const commentsResponse = await axios.get(
-          `http://localhost:5000/api/videos/${id}/comments`,
+          `https://dtube-api-2.onrender.com/api/videos/${id}/comments`,
         );
         setComments(commentsResponse.data);
 
@@ -107,7 +107,7 @@ const VideoDetail = () => {
   useEffect(() => {
     if (id && !viewRecorded.current) {
       viewRecorded.current = true;
-      axios.post(`http://localhost:5000/api/videos/${id}/view`).catch(() => {
+      axios.post(`https://dtube-api-2.onrender.com/api/videos/${id}/view`).catch(() => {
         // Silently ignore view recording errors — non-critical
       });
     }
@@ -118,7 +118,7 @@ const VideoDetail = () => {
     if (!video || !video.isPremier) return;
 
     // Open connection to WebSocket server
-    const socket = new WebSocket("ws://localhost:5000");
+    const socket = new WebSocket("wss://dtube-api-2.onrender.com");
     setWs(socket);
 
     socket.onopen = () => {
@@ -203,7 +203,7 @@ const VideoDetail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/videos/${id}/like`,
+        `https://dtube-api-2.onrender.com/api/videos/${id}/like`,
         {},
         apiConfig,
       );
@@ -236,7 +236,7 @@ const VideoDetail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/videos/${video.uploader._id}/subscribe`,
+        `https://dtube-api-2.onrender.com/api/videos/${video.uploader._id}/subscribe`,
         {},
         apiConfig,
       );
@@ -266,7 +266,7 @@ const VideoDetail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/videos/${id}/comments`,
+        `https://dtube-api-2.onrender.com/api/videos/${id}/comments`,
         { text: newCommentText },
         apiConfig,
       );
@@ -283,7 +283,7 @@ const VideoDetail = () => {
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/videos/comments/${commentId}`,
+        `https://dtube-api-2.onrender.com/api/videos/comments/${commentId}`,
         apiConfig,
       );
 
@@ -337,7 +337,7 @@ const VideoDetail = () => {
             ) : (
               // Standard Video Player revealed once countdown hits zero
               <video
-                src={`http://localhost:5000/uploads/${video.videoUrl.split("/").pop()}`}
+                src={`https://dtube-api-2.onrender.com/uploads/${video.videoUrl.split("/").pop()}`}
                 crossOrigin="anonymous"
                 controls
                 autoPlay

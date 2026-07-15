@@ -14,7 +14,7 @@ const CreatorChannel = () => {
     setError("");
 
     axios
-      .get(`http://localhost:5000/api/videos/profile/${username}`)
+      .get(`https://dtube-api-2.onrender.com/api/videos/profile/${username}`)
       .then((res) => {
         setChannelData(res.data);
         setLoading(false);

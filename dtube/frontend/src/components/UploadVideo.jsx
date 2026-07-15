@@ -36,7 +36,7 @@ const UploadVideo = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/videos/upload",
+        "https://dtube-api-2.onrender.com/api/videos/upload",
         formData,
         {
           headers: {

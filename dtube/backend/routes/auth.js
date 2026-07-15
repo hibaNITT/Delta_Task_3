@@ -12,17 +12,17 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 
 const FRONTEND_HOME_URL =
-  process.env.FRONTEND_HOME_URL || "http://localhost:5173";
+  process.env.FRONTEND_HOME_URL || "https://dtube-frontend-f89f.onrender.com";
 const GOOGLE_CALLBACK_URL =
   process.env.GOOGLE_CALLBACK_URL ||
-  "http://localhost:5000/api/auth/google/callback";
+  "https://dtube-api-2.onrender.com/api/auth/google/callback";
 const DAUTH_BASE_URL = (
   process.env.DAUTH_BASE_URL || "https://auth.delta.nitt.edu"
 ).replace(/\/$/, "");
 const DAUTH_AUTHORIZE_PATH = process.env.DAUTH_AUTHORIZE_PATH || "/authorize";
 const DAUTH_CALLBACK_URL =
   process.env.DAUTH_CALLBACK_URL ||
-  "http://localhost:5000/api/auth/dauth/callback";
+  "https://dtube-api-2.onrender.com/api/auth/dauth/callback";
 const DAUTH_SCOPE = process.env.DAUTH_SCOPE || "email openid profile user";
 
 const buildFrontendAuthRedirect = (token, user, provider) => {
@@ -290,7 +290,7 @@ router.post("/forgot-password", async (req, res) => {
     //  Print the link directly to our terminal console for testing
     console.log(`\n==========  PASSWORD RESET EMAIL  ==========`);
     console.log(`To reset your password, send a POST request to:`);
-    console.log(`http://localhost:5000/api/auth/reset-password/${resetToken}`);
+    console.log(`https://dtube-api-2.onrender.com/api/auth/reset-password/${resetToken}`);
     console.log(`======================================================\n`);
 
     res.status(200).json({

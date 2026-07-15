@@ -18,7 +18,7 @@ const VideoFeed = () => {
     const fetchFeed = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/videos/public-feed",
+          "https://dtube-api-2.onrender.com/api/videos/public-feed",
         );
 
         // Extract the head node of the linked list

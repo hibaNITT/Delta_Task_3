@@ -37,7 +37,7 @@ const BannerAd = ({ user, token, updateUser }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/pro/subscribe",
+        "https://dtube-api-2.onrender.com/api/auth/pro/subscribe",
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -155,13 +155,13 @@ const AuthPage = ({
 
         {/* Hand-rolled Google Sign In button added directly to the account page */}
         <a
-          href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
+          href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fdtube-api-2.onrender.com%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
           className="google-signin-btn"
         >
           Sign in with Google
         </a>
         <a
-          href="http://localhost:5000/api/auth/dauth/start"
+          href="https://dtube-api-2.onrender.com/api/auth/dauth/start"
           className="dauth-signin-btn"
         >
           Sign in with DAuth
@@ -222,7 +222,7 @@ const MainDashboard = () => {
     }
 
     axios
-      .get("http://localhost:5000/api/health")
+      .get("https://dtube-api-2.onrender.com/api/health")
       .then((response) => setHealthStatus(response.data.status))
       .catch((error) => {
         console.error("Error fetching health status:", error);
@@ -239,7 +239,7 @@ const MainDashboard = () => {
     e.preventDefault();
     setSignupStatus({ message: "", isError: false });
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", signupData);
+      await axios.post("https://dtube-api-2.onrender.com/api/auth/signup", signupData);
       setSignupStatus({
         message: "Account created successfully! Proceed to sign in.",
         isError: false,
@@ -258,7 +258,7 @@ const MainDashboard = () => {
     setLoginStatus({ message: "", isError: false });
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://dtube-api-2.onrender.com/api/auth/login",
         loginData,
       );
       login(res.data.user, res.data.token);

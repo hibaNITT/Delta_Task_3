@@ -9,7 +9,7 @@ const Trending = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/videos/trending")
+      .get("https://dtube-api-2.onrender.com/api/videos/trending")
       .then((res) => {
         setVideos(res.data);
         setLoading(false);

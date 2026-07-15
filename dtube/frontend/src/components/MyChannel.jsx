@@ -31,7 +31,7 @@ const MyChannel = () => {
     setError("");
 
     axios
-      .get(`http://localhost:5000/api/videos/profile/${user.username}`)
+      .get(`https://dtube-api-2.onrender.com/api/videos/profile/${user.username}`)
       .then((res) => {
         setChannelData(res.data);
         setLoading(false);
@@ -59,7 +59,7 @@ const MyChannel = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/videos/${videoId}`, apiConfig);
+      await axios.delete(`https://dtube-api-2.onrender.com/api/videos/${videoId}`, apiConfig);
       alert("Video deleted successfully.");
       // Refresh local state list
       setChannelData((prev) => ({
@@ -89,7 +89,7 @@ const MyChannel = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/videos/${editingVideo._id}`,
+        `https://dtube-api-2.onrender.com/api/videos/${editingVideo._id}`,
         {
           title: editTitle,
           description: editDescription,
@@ -128,7 +128,7 @@ const MyChannel = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/pro/unsubscribe",
+        "https://dtube-api-2.onrender.com/api/auth/pro/unsubscribe",
         {},
         apiConfig,
       );
@@ -152,7 +152,7 @@ const MyChannel = () => {
   const handleActivatePro = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/pro/subscribe",
+        "https://dtube-api-2.onrender.com/api/auth/pro/subscribe",
         {},
         apiConfig,
       );

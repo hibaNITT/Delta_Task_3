@@ -3,7 +3,7 @@
 //  it to headers inside every single request you write for the rest of this project, you can set up an Axios Instance with an Interceptor.
 
 // Axios Instance: A custom, configured copy of the Axios library. It lets you predefine baseline settings
-// (like your backend's baseURL) so you don't have to retype http://localhost:5000 in every component.
+// (like your backend's baseURL) so you don't have to retype https://dtube-api-2.onrender.com in every component.
 
 // Axios Interceptor: A function that acts like an automated postal clerk.
 // Right before any request leaves your frontend, the interceptor intercepts it, opens the digital envelope,
@@ -13,7 +13,7 @@ import axios from "axios";
 
 // Create an Axios instance with our fixed backend URL
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://dtube-api-2.onrender.com",
 });
 
 // Set up a Request Interceptor
