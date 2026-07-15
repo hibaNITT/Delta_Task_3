@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Analytics = require("../models/Analytics");
+const Analytics = require("../models/analytics");
 const auth = require("../middleware/auth"); // For capturing authenticated user id if available
 const isAdmin = require("../middleware/isAdmin"); // To restrict metric views to admins only
 
