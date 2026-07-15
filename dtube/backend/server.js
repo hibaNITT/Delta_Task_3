@@ -21,7 +21,8 @@ const path = require("path");
 app.use(express.json()); // Allows server to read JSON data
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://dtube-api-2.onrender.com", // Use your frontend's Render URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
 ); // Permits communication with our frontend code
