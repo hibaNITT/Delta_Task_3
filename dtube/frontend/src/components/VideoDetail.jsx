@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import FlagCommentModal from "./FlagCommentModal";
@@ -7,8 +7,10 @@ import FlagVideoModal from "./FlagVideoModal";
 import "../App.css";
 
 const VideoDetail = () => {
-  // Get video ID from URL and login info from global Context
+  // Get video ID from URL and
+  // login info from global Context
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, token } = useContext(AuthContext);
 
   // Component states
@@ -57,7 +59,7 @@ const VideoDetail = () => {
 
         // Check if the logged-in user liked this video
         if (user && videoData.likes) {
-          const currentUserId = user.userId || user._id;
+          const currentUserId = user.userId || user._id || user.id;
           setIsLiked(videoData.likes.includes(currentUserId));
         }
 
@@ -73,7 +75,7 @@ const VideoDetail = () => {
           setSubCount(currentSubscribers.length);
 
           if (user) {
-            const currentUserId = user.userId || user._id;
+            const currentUserId = user.userId || user._id || user.id;
             // Establish real initial subscription check
             setIsSubscribed(
               currentSubscribers
@@ -98,6 +100,18 @@ const VideoDetail = () => {
       fetchVideoData();
     }
   }, [id, user]);
+
+  // Record one view per page visit via a dedicated endpoint
+  // Using a ref to ensure this only fires once even in React StrictMode
+  const viewRecorded = React.useRef(false);
+  useEffect(() => {
+    if (id && !viewRecorded.current) {
+      viewRecorded.current = true;
+      axios.post(`http://localhost:5000/api/videos/${id}/view`).catch(() => {
+        // Silently ignore view recording errors — non-critical
+      });
+    }
+  }, [id]);
 
   // 1. Live Chat WebSocket Connection Setup
   useEffect(() => {
@@ -210,10 +224,15 @@ const VideoDetail = () => {
   const handleSubscribeToggle = async () => {
     if (!token) return alert("Please log in to subscribe to channels!");
 
-    const currentUserId = user.userId || user._id;
+    const currentUserId = user.userId || user._id || user.id;
     if (video.uploader._id === currentUserId) {
       return alert("You cannot subscribe to your own channel.");
     }
+
+    // Optimistically update UI immediately before the API call
+    const wasSubscribed = isSubscribed;
+    setIsSubscribed(!wasSubscribed);
+    setSubCount((prev) => (wasSubscribed ? prev - 1 : prev + 1));
 
     try {
       const response = await axios.post(
@@ -222,14 +241,19 @@ const VideoDetail = () => {
         apiConfig,
       );
 
-      if (response.data.subscribed) {
-        setIsSubscribed(true);
-        setSubCount(subCount + 1);
-      } else {
-        setIsSubscribed(false);
-        setSubCount(subCount - 1);
-      }
+      // Sync with the authoritative server response
+      setIsSubscribed(response.data.subscribed);
+      setSubCount((prev) =>
+        response.data.subscribed !== wasSubscribed
+          ? prev // already correct from optimistic update
+          : wasSubscribed
+          ? prev + 1  // revert: it's still subscribed
+          : prev - 1, // revert: it's still unsubscribed
+      );
     } catch (err) {
+      // Revert optimistic update on error
+      setIsSubscribed(wasSubscribed);
+      setSubCount((prev) => (wasSubscribed ? prev + 1 : prev - 1));
       alert("Error updating subscription status.");
     }
   };
@@ -404,7 +428,7 @@ const VideoDetail = () => {
       <h2>{video.title}</h2>
       <div className="video-engagement-row">
         <span className="video-meta-text">
-          {video.views || 0} views •{" "}
+          {video.viewCount || 0} views •{" "}
           {new Date(video.createdAt).toLocaleDateString()}
         </span>
         <div className="engagement-buttons">
@@ -430,12 +454,18 @@ const VideoDetail = () => {
       <div className="channel-info-row">
         <div>
           <h4 className="channel-name">
-            Channel: {video.uploader?.username || "Unknown Creator"}
-          </h4>
+  Channel:{" "}
+  <Link 
+    to={`/user/${video.uploader?.username}`} 
+    style={{ color: "#2563EB", cursor: "pointer", textDecoration: "underline" }}
+  >
+    @{video.uploader?.username || "Unknown Creator"}
+  </Link>
+</h4>
           <span className="placeholder-text">{subCount} subscribers</span>
         </div>
         {/* Show Subscribe/Unsubscribe button only if visiting another user's channel video */}
-        {user && video.uploader?._id !== (user.userId || user._id) && (
+        {user && video.uploader?._id !== (user.userId || user._id || user.id) && (
           <button
             onClick={handleSubscribeToggle}
             className={`subscribe-btn ${isSubscribed ? "subscribed" : "unsubscribed"}`}
@@ -469,10 +499,14 @@ const VideoDetail = () => {
             </button>
           </form>
         ) : (
-          <p className="placeholder-text">
-            Please <Link to="/auth">login</Link> to add your input or interact
-            with this video.
-          </p>
+          <div className="comment-signin-prompt">
+            <span className="comment-signin-text">
+              Sign in to join the conversation
+            </span>
+            <Link to="/auth" className="comment-signin-btn">
+              Sign In
+            </Link>
+          </div>
         )}
 
         {/* Comments Stream Feed lists mapping loop */}
@@ -480,7 +514,7 @@ const VideoDetail = () => {
           {comments.map((comment) => (
             <div
               key={comment._id}
-              className="comment-card"
+              className={`comment-card ${flaggedComments.has(comment._id) ? "comment-card--flagged" : ""}`}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -491,12 +525,18 @@ const VideoDetail = () => {
                   @{comment.uploader?.username || "User"}
                 </strong>
                 <p className="comment-text">{comment.text}</p>
+                {/* Flagged indicator shown inline under the comment text */}
+                {flaggedComments.has(comment._id) && (
+                  <span className="comment-flagged-badge comment-flagged-badge--inline">
+                    🚩 Reported
+                  </span>
+                )}
               </div>
 
               {/* Show delete and flag actions */}
               <div className="comment-actions">
                 {user &&
-                  (comment.uploader?._id === (user.userId || user._id) ||
+                  (comment.uploader?._id === (user.userId || user._id || user.id) ||
                     user.role === "admin") && (
                     <button
                       onClick={() => handleDeleteComment(comment._id)}
@@ -516,8 +556,10 @@ const VideoDetail = () => {
                     🚩 Flag
                   </button>
                 )}
-                {flaggedComments.has(comment._id) && (
-                  <span className="comment-flagged-badge">✓ Flagged</span>
+                {!token && (
+                  <Link to="/auth" className="comment-signin-btn comment-signin-btn--sm">
+                    Sign In
+                  </Link>
                 )}
               </div>
             </div>

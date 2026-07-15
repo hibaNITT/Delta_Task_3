@@ -141,6 +141,48 @@ router.delete("/moderate/:id", auth, isAdmin, async (req, res) => {
 // GET /api/videos/trending
 // Fetches the top 20 most viewed videos for trending discovery
 
+// GET /api/users/:username
+// Public route to fetch a channel profile and all their uploaded assets
+// IMPORTANT: This MUST come before /:id to avoid Express treating "profile" as an ID
+router.get("/profile/:username", async (req, res) => {
+  try {
+    // Locate the channel creator by their unique username
+    const channelOwner = await User.findOne({
+      username: req.params.username,
+    }).select("-password"); // Safeguard: exclude the password hash from escaping
+
+    if (!channelOwner) {
+      return res.status(404).json({ message: "Channel or user not found" });
+    }
+
+    //  Fetch all videos whose uploader reference ID matches this specific user ID
+    const channelVideos = await Video.find({ uploader: channelOwner._id }).sort(
+      { createdAt: -1 },
+    ); // Newest uploads first
+
+    //  Return a combined profile summary payload
+    res.status(200).json({
+      profile: {
+        username: channelOwner.username,
+        email: channelOwner.email,
+        role: channelOwner.role,
+        isPro: channelOwner.isPro,
+        strikes: channelOwner.strikes,
+        // Calculate subscriber count based on array length if populated
+        subscribersCount: channelOwner.subscribers
+          ? channelOwner.subscribers.length
+          : 0,
+      },
+      videos: channelVideos,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching channel aggregation layout",
+      error: error.message,
+    });
+  }
+});
+
 router.get("/trending", async (req, res) => {
   try {
     console.log("Fetching trending videos...");
@@ -181,7 +223,6 @@ router.get("/trending", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    // FIX: Added 'subscribers' to the populate configuration string
     const video = await Video.findById(req.params.id).populate(
       "uploader",
       "username email subscribers",
@@ -194,6 +235,19 @@ router.get("/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Server error fetching video.", error: error.message });
+  }
+});
+
+// POST /api/videos/:id/view
+// Dedicated endpoint to record one view — keeps GET idempotent
+router.post("/:id/view", async (req, res) => {
+  try {
+    await Video.findByIdAndUpdate(req.params.id, { $inc: { viewCount: 1 } });
+    res.status(200).json({ message: "View recorded." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error recording view.", error: error.message });
   }
 });
 
@@ -354,47 +408,8 @@ router.delete("/comments/:id", auth, async (req, res) => {
   }
 });
 
-// GET /api/users/:username
-// Public route to fetch a channel profile and all their uploaded assets
-router.get("/profile/:username", async (req, res) => {
-  try {
-    // Locate the channel creator by their unique username
-    const channelOwner = await User.findOne({
-      username: req.params.username,
-    }).select("-password"); // Safeguard: exclude the password hash from escaping
-
-    if (!channelOwner) {
-      return res.status(404).json({ message: "Channel or user not found" });
-    }
-
-    //  Fetch all videos whose uploader reference ID matches this specific user ID
-    // We leverage our required search parameter configuration structure here
-    const channelVideos = await Video.find({ uploader: channelOwner._id }).sort(
-      { createdAt: -1 },
-    ); // Newest uploads first
-
-    //  Return a combined profile summary payload
-    res.status(200).json({
-      profile: {
-        username: channelOwner.username,
-        email: channelOwner.email,
-        role: channelOwner.role,
-        isPro: channelOwner.isPro,
-        strikes: channelOwner.strikes,
-        // Calculate subscriber count based on array length if populated
-        subscribersCount: channelOwner.memberships
-          ? channelOwner.memberships.length
-          : 0,
-      },
-      videos: channelVideos,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error fetching channel aggregation layout",
-      error: error.message,
-    });
-  }
-});
+// NOTE: /profile/:username route has been moved ABOVE /:id to prevent route shadowing.
+// See the route defined earlier in this file.
 
 //  For subscribe option
 // POST Toggle Subscribe / Unsubscribe
@@ -438,8 +453,8 @@ router.post("/:id/subscribe", auth, async (req, res) => {
       // 2. SUBSCRIBE ACTION: Add user ID to array and return true (Only 1 entry ever recorded per account)
       await User.findByIdAndUpdate(
         req.params.id,
-        { $pull: { subscribers: currentUserId } },
-        { returnDocument: "after" }, // Add this option!
+        { $addToSet: { subscribers: currentUserId } },
+        { returnDocument: "after" },
       );
       return res
         .status(200)

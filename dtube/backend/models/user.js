@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     isPro: { type: Boolean, default: false },
     proExpiresAt: { type: Date, default: null },
     memberships: [{ type: String }], // Array of channel/user IDs joined
+    subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Users subscribed to this channel
     strikes: { type: Number, default: 0 },
     resetPasswordToken: {
       type: String,
