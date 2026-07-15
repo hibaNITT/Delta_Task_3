@@ -24,7 +24,7 @@ The Identity Gatekeeper (auth.js): Unpacks that token on the backend, checks its
 The Permission Lock (isAdmin.js): Leverages that verified profile to isolate elite actions from standard accounts using proper HTTP status segregation (401 vs. 403).
 
 The Backend Core
-User Database Model (models/User.js): Built our Mongoose blueprint containing username, email, passwordHash, role, isPro, memberships, and community guideline strikes.
+User Database Model (models/user.js): Built our Mongoose blueprint containing username, email, passwordHash, role, isPro, memberships, and community guideline strikes.
 
 Hand-Rolled Registration: Configured the /api/auth/signup route to prevent duplicate accounts and securely hash passwords with bcryptjs.
 

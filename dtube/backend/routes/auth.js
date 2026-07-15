@@ -4,22 +4,22 @@ const { signup, login } = require("../controllers/authController");
 
 // We will use Node's native crypto library to generate a random string for the token.
 const crypto = require("crypto");
-const User = require("../models/User");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const authMiddleware = require("../middleware/auth");
 
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 
-const FRONTEND_HOME_URL = process.env.FRONTEND_HOME_URL || "http://localhost:5173";
+const FRONTEND_HOME_URL =
+  process.env.FRONTEND_HOME_URL || "http://localhost:5173";
 const GOOGLE_CALLBACK_URL =
   process.env.GOOGLE_CALLBACK_URL ||
   "http://localhost:5000/api/auth/google/callback";
 const DAUTH_BASE_URL = (
   process.env.DAUTH_BASE_URL || "https://auth.delta.nitt.edu"
 ).replace(/\/$/, "");
-const DAUTH_AUTHORIZE_PATH =
-  process.env.DAUTH_AUTHORIZE_PATH || "/authorize";
+const DAUTH_AUTHORIZE_PATH = process.env.DAUTH_AUTHORIZE_PATH || "/authorize";
 const DAUTH_CALLBACK_URL =
   process.env.DAUTH_CALLBACK_URL ||
   "http://localhost:5000/api/auth/dauth/callback";
@@ -41,11 +41,12 @@ const buildFrontendAuthRedirect = (token, user, provider) => {
 
 const buildUniqueUsername = async (rawName, fallbackEmail) => {
   const fallback = fallbackEmail ? fallbackEmail.split("@")[0] : "dauth_user";
-  const baseUsername = String(rawName || fallback)
-    .trim()
-    .replace(/\s+/g, "_")
-    .replace(/[^\w.-]/g, "")
-    .slice(0, 32) || fallback;
+  const baseUsername =
+    String(rawName || fallback)
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^\w.-]/g, "")
+      .slice(0, 32) || fallback;
 
   let username = baseUsername;
   let count = 1;
@@ -178,7 +179,9 @@ router.get("/dauth/callback", async (req, res) => {
   const { code, state } = req.query;
 
   if (!code) {
-    return res.status(400).json({ message: "Authorization code missing from DAuth redirect." });
+    return res
+      .status(400)
+      .json({ message: "Authorization code missing from DAuth redirect." });
   }
 
   let callbackStep = "token";
@@ -217,7 +220,13 @@ router.get("/dauth/callback", async (req, res) => {
     );
 
     const dauthUser = userinfoResponse.data;
-    const dauthId = getDauthUserValue(dauthUser, ["id", "_id", "sub", "rollNumber", "roll"]);
+    const dauthId = getDauthUserValue(dauthUser, [
+      "id",
+      "_id",
+      "sub",
+      "rollNumber",
+      "roll",
+    ]);
     const email =
       getDauthUserValue(dauthUser, ["email", "emailAddress"]) ||
       `${dauthId || crypto.randomBytes(8).toString("hex")}@dauth.local`;
@@ -342,11 +351,9 @@ router.get("/google/callback", async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
-    return res
-      .status(400)
-      .json({
-        message: "Authorization code missing from Google redirect context.",
-      });
+    return res.status(400).json({
+      message: "Authorization code missing from Google redirect context.",
+    });
   }
 
   try {
