@@ -118,6 +118,35 @@ router.post("/pro/subscribe", authMiddleware, async (req, res) => {
   }
 });
 
+// DTube Pro: cancel/disable subscription.
+router.post("/pro/unsubscribe", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { isPro: false, proExpiresAt: null },
+      { new: true },
+    ).select("_id username email role isPro proExpiresAt");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({
+      message: "DTube Pro deactivated.",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        isPro: user.isPro,
+        proExpiresAt: user.proExpiresAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Could not deactivate DTube Pro." });
+  }
+});
+
 // DAUTH AUTH
 
 // @route   GET /api/auth/dauth/start

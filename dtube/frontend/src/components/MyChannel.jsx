@@ -5,7 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import "../App.css";
 
 const MyChannel = () => {
-  const { user, token } = useContext(AuthContext);
+  const { user, token, updateUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [channelData, setChannelData] = useState(null);
@@ -117,6 +117,62 @@ const MyChannel = () => {
     }
   };
 
+  const handleDisablePro = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to deactivate your DTube Pro Subscription? Banner ads will be re-enabled.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/pro/unsubscribe",
+        {},
+        apiConfig,
+      );
+      updateUser(res.data.user);
+
+      // Update local state profile too
+      setChannelData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          isPro: false,
+        },
+      }));
+
+      alert("DTube Pro has been successfully deactivated.");
+    } catch (err) {
+      alert(err.response?.data?.message || "Could not deactivate DTube Pro.");
+    }
+  };
+
+  const handleActivatePro = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/pro/subscribe",
+        {},
+        apiConfig,
+      );
+      updateUser(res.data.user);
+
+      // Update local state profile too
+      setChannelData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          isPro: true,
+        },
+      }));
+
+      alert("DTube Pro activated. Ads are now hidden.");
+    } catch (err) {
+      alert(err.response?.data?.message || "Could not activate DTube Pro.");
+    }
+  };
+
   if (!user) {
     return (
       <div className="channel-container" style={{ textAlign: "center", padding: "40px" }}>
@@ -156,6 +212,39 @@ const MyChannel = () => {
             Total Uploads: <strong>{videos.length} clips</strong>
           </span>
           {profile.isPro && <span className="pro-badge">PRO MEMBER</span>}
+        </div>
+        
+        <div style={{ marginTop: "16px" }}>
+          {profile.isPro ? (
+            <button
+              onClick={handleDisablePro}
+              className="comment-delete-btn"
+              style={{
+                padding: "6px 12px",
+                border: "1px solid var(--p-cream)",
+                color: "var(--p-cream)",
+                background: "transparent",
+                borderRadius: "var(--radius-full)",
+                cursor: "pointer"
+              }}
+            >
+              Disable Pro Membership
+            </button>
+          ) : (
+            <button
+              onClick={handleActivatePro}
+              className="comment-signin-btn"
+              style={{
+                padding: "6px 12px",
+                background: "var(--p-cream)",
+                color: "var(--accent-text)",
+                border: "none",
+                cursor: "pointer"
+              }}
+            >
+              Go Pro
+            </button>
+          )}
         </div>
       </div>
 
