@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import "../App.css"; // Make sure to import your style file!
@@ -9,7 +9,13 @@ const CreatorChannel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const fetchChannel = useCallback(() => {
+    if (!username || username === "undefined") {
+      setError("Invalid channel username.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -22,11 +28,15 @@ const CreatorChannel = () => {
       .catch((err) => {
         console.error("Error loading channel data:", err);
         setError(
-          err.response?.data?.message || "Could not retrieve channel details.",
+          err.response?.data?.message || "Could not retrieve channel details. The backend may still be waking up — please try again.",
         );
         setLoading(false);
       });
   }, [username]);
+
+  useEffect(() => {
+    fetchChannel();
+  }, [fetchChannel]);
 
   if (loading)
     return (
@@ -34,7 +44,26 @@ const CreatorChannel = () => {
         Syncing channel telemetry statistics...
       </div>
     );
-  if (error) return <div className="error-message">{error}</div>;
+  if (error) return (
+    <div style={{ textAlign: "center", padding: "2rem" }}>
+      <div className="error-message">{error}</div>
+      <button
+        onClick={fetchChannel}
+        style={{
+          marginTop: "1rem",
+          padding: "0.5rem 1.5rem",
+          background: "#2563EB",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "0.95rem",
+        }}
+      >
+        Retry
+      </button>
+    </div>
+  );
   if (!channelData)
     return <div className="status-message">No channel details found.</div>;
 
@@ -88,3 +117,4 @@ const CreatorChannel = () => {
 };
 
 export default CreatorChannel;
+

@@ -155,7 +155,7 @@ const AuthPage = ({
 
         {/* Hand-rolled Google Sign In button added directly to the account page */}
         <a
-          href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-fcohrrjnrl6kp7eln3j9tbdnnqo8jmgd.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fdtube-api-2.onrender.com%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
+          href="https://accounts.google.com/o/oauth2/v2/auth?client_id=670552438880-3h4950t6q74km6aiogrlcmr4ipcqlu4q.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fdtube-api-2.onrender.com%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email"
           className="google-signin-btn"
         >
           Sign in with Google
