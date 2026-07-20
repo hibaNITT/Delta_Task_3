@@ -1,0 +1,71 @@
+import { useState } from "react";
+import api from "../api";
+
+export default function FlagVideoModal({ videoId, onClose, onSuccess }) {
+  const [reason, setReason] = useState("copyright");
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("Flagging video:", videoId, { reason, description });
+      const response = await api.post(`/api/flags/video/${videoId}`, {
+        reason,
+        description,
+      });
+      console.log("Flag success:", response.data);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      console.error("Flag error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to flag video");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h3>Report Video</h3>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Reason:</label>
+            <select value={reason} onChange={(e) => setReason(e.target.value)}>
+              <option value="copyright">Copyright Strike</option>
+              <option value="malicious">Malicious/Harmful</option>
+              <option value="spam">Spam</option>
+              <option value="harassment">Harassment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Description:</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Explain why you're reporting this..."
+            />
+          </div>
+
+          {error && <p className="error">{error}</p>}
+
+          <div className="modal-buttons">
+            <button type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Report"}
+            </button>
+            <button type="button" onClick={onClose}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

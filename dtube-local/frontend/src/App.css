@@ -1,0 +1,2055 @@
+/* ============================================================
+   DTUBE — App.css
+   Component-level styles — "Basic but Classic" aesthetic
+   All colours, spacing, and radii come from CSS tokens
+   ============================================================ */
+
+/* ============================================================
+   PREMIERE / LIVE CHAT SIDEBAR
+   ============================================================ */
+.premiere-wrapper {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.premiere-player-col {
+  flex: 3;
+  min-width: 0;
+}
+
+.premiere-countdown {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  text-align: center;
+  padding: var(--space-5);
+}
+
+.premiere-countdown h2 {
+  color: var(--accent);
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.premiere-countdown-timer {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.premiere-countdown-label {
+  margin-top: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Live chat sidebar */
+.live-chat-sidebar {
+  flex: 1;
+  min-width: 260px;
+  max-width: 320px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.live-chat-header {
+  padding: var(--space-2) var(--space-2);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--bg-subtle);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+.live-chat-messages {
+  padding: var(--space-1) var(--space-2);
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 200px;
+  max-height: 400px;
+}
+
+.live-chat-message {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.live-chat-message .chat-username {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.live-chat-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+  font-size: 0.875rem;
+  margin-top: var(--space-3);
+}
+
+.live-chat-footer {
+  padding: var(--space-1) var(--space-2);
+  border-top: 1px solid var(--border);
+  background-color: var(--bg-subtle);
+}
+
+.live-chat-form {
+  display: flex;
+  gap: 6px;
+}
+
+.live-chat-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+.live-chat-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+.live-chat-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+.live-chat-send-btn {
+  padding: 8px var(--space-2);
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  transition: background-color var(--transition);
+}
+.live-chat-send-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.live-chat-login-prompt {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--space-1) 0;
+}
+
+/* ── Layout Wrapper ───────────────────────────────────────── */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  background-color: var(--p-moss);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-2) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-xs);
+}
+
+.navbar-brand {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--p-cream);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.navbar-brand:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.navbar-user span {
+  font-size: 0.9rem;
+  color: var(--p-cream);
+}
+
+.navbar-user strong {
+  color: var(--p-cream);
+}
+
+/* ── Sign Out Button (Navbar) ─────────────────────────────── */
+.btn-signout {
+  padding: 7px var(--space-2);
+  background-color: var(--p-deep-red);
+  color: var(--p-cream);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+  font-family: var(--font-sans);
+}
+
+.btn-signout:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.btn-signin-nav {
+  padding: 7px var(--space-2);
+  background-color: var(--accent);
+  color: var(--p-cream);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+  font-family: var(--font-sans);
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-signin-nav:hover {
+  background-color: var(--accent-hover);
+  color: var(--p-cream);
+  text-decoration: none;
+}
+
+/* ── Not signed-in label ──────────────────────────────────── */
+.navbar-guest {
+  font-size: 0.875rem;
+  color: var(--p-cream);
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* ============================================================
+   NAV CONTEXT BAR  (secondary navigation strip)
+   ============================================================ */
+.nav-context-bar {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  overflow-x: auto;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--transition),
+    border-color var(--transition);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--border);
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ============================================================
+   HEALTH STATUS STRIP
+   ============================================================ */
+.health-strip {
+  background-color: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 6px var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.health-strip strong {
+  font-weight: 600;
+}
+
+.health-ok {
+  color: var(--success);
+}
+.health-error {
+  color: var(--danger);
+}
+
+.banner-ad {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 10px var(--space-3);
+  background-color: var(--p-cream);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.banner-ad-label {
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.banner-ad button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.banner-ad button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* ============================================================
+   SHARED BUTTON SYSTEM
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px var(--space-3);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    color var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Primary */
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary / Outline */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.btn-secondary:hover {
+  background-color: var(--bg-subtle);
+  border-color: var(--border);
+}
+
+/* Danger */
+.btn-danger {
+  background-color: var(--danger);
+  color: var(--text-inverse);
+  border-color: var(--danger);
+}
+.btn-danger:hover {
+  background-color: var(--p-deep-red);
+  border-color: var(--p-deep-red);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Ghost / text-like */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+  padding: 6px var(--space-1);
+  font-size: 0.875rem;
+}
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+}
+
+/* Small size modifier */
+.btn-sm {
+  padding: 6px var(--space-2);
+  font-size: 0.8125rem;
+}
+
+/* Disabled state */
+.btn:disabled,
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================================
+   SHARED FORM INPUTS
+   ============================================================ */
+.form-input,
+.form-select,
+.form-textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ============================================================
+   STATUS / FEEDBACK MESSAGES
+   ============================================================ */
+.status-message {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-message.success {
+  background-color: var(--success-light);
+  color: var(--success);
+}
+
+.status-message.error {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 0.875rem;
+  padding: var(--space-2);
+}
+
+/* ============================================================
+   AUTH PAGE  (Login + Sign Up)
+   ============================================================ */
+.auth-page-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-4);
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Auth card */
+.auth-box {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  width: 340px;
+  max-width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-box-header {
+  margin: 0 0 var(--space-3) 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Signup header accent */
+.auth-box-header.signup {
+  color: var(--accent);
+}
+
+/* Login header accent */
+.auth-box-header.login {
+  color: var(--accent);
+}
+
+.auth-box-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.auth-box-input {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.auth-box-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.auth-box-input:focus {
+  outline: none;
+  background-color: var(--bg-card);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+/* Auth action buttons */
+.btn-signup,
+.btn-login {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.btn-signup {
+  background-color: var(--accent);
+  color: var(--text-inverse);
+}
+.btn-signup:hover {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-login {
+  background-color: var(--accent);
+  color: var(--text-inverse);
+}
+.btn-login:hover {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* OR divider */
+.auth-divider {
+  margin: var(--space-2) 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  position: relative;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 20px);
+  height: 1px;
+  background-color: var(--border);
+}
+.auth-divider::before {
+  left: 0;
+}
+.auth-divider::after {
+  right: 0;
+}
+
+/* Google sign-in */
+.google-signin-btn,
+.dauth-signin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 11px;
+  background-color: var(--p-rust);
+  color: var(--text-inverse);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+.google-signin-btn:hover {
+  background-color: var(--p-deep-red);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.dauth-signin-btn {
+  margin-top: var(--space-1);
+  background-color: var(--accent);
+}
+
+.dauth-signin-btn:hover {
+  background-color: var(--accent-hover);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   VIDEO FEED
+   ============================================================ */
+.feed-container {
+  padding: var(--space-4);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.feed-error {
+  color: var(--danger);
+  font-size: 0.875rem;
+  padding: var(--space-3);
+  background-color: var(--danger-light);
+  border-radius: var(--radius-md);
+}
+
+.video-feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.video-card-wrapper {
+  position: relative;
+}
+
+/* Individual video card */
+.video-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition),
+    border-color var(--transition),
+    transform 0.12s ease;
+}
+
+.video-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+}
+
+/* Thumbnail */
+.video-thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Card body */
+.video-card-body {
+  padding: var(--space-2);
+}
+
+.video-card-title {
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.video-card-link {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.video-card-link:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.video-card-creator {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.video-card-views {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+/* Flag button on feed card */
+.feed-flag-btn {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  z-index: 10;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+.feed-flag-btn:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ============================================================
+   VIDEO DETAIL PAGE
+   ============================================================ */
+.video-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* HTML5 video player */
+.video-player-wrapper {
+  background: #0a0a0a;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.video-player {
+  width: 100%;
+  max-height: 540px;
+  display: block;
+}
+
+/* Title row & meta */
+.flex-row-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.video-meta-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Engagement row */
+.video-engagement-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.engagement-buttons {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+/* Like button — pill shape */
+.like-btn {
+  padding: 8px var(--space-2);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.like-btn.active {
+  background-color: var(--accent-light);
+  color: var(--accent-text);
+  border-color: var(--border);
+}
+
+.like-btn.inactive {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+.like-btn.inactive:hover {
+  background-color: var(--bg-subtle);
+}
+
+/* Subscribe button */
+/* Base styling for the subscription button */
+.subscribe-btn {
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* State 1: When NOT subscribed (Prominent Action) */
+.subscribe-btn.unsubscribed {
+  background-color: #e50914; /* Red */
+  color: white;
+}
+
+.subscribe-btn.unsubscribed:hover {
+  background-color: #b80710;
+}
+
+/* State 2: When ALREADY subscribed (Muted styling) */
+.subscribe-btn.subscribed {
+  background-color: #333333; /* Dark Grey */
+  color: #aaaaaa;
+  border: 1px solid #555555;
+}
+
+/* Hovering over the subscribed button turns it into an explicit Unsubscribe prompt */
+.subscribe-btn.subscribed:hover {
+  background-color: #cc0000; /* Distinct red warning on hover */
+  color: white;
+  content: "Unsubscribe"; /* Optional semantic helper depending on layout */
+}
+
+/* Flag video button */
+.flag-video-btn {
+  padding: 8px var(--space-2);
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+.flag-video-btn:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.flag-video-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Channel info row */
+.channel-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border);
+}
+
+.channel-name {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Description box */
+.description-box {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+
+.description-box p {
+  margin: 0;
+  color: inherit;
+}
+
+/* ============================================================
+   COMMENTS SYSTEM
+   ============================================================ */
+.comments-section {
+  margin-top: var(--space-4);
+}
+
+.comments-section h3 {
+  margin-bottom: var(--space-3);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.comment-form {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+  align-items: flex-start;
+}
+
+.comment-input {
+  flex-grow: 1;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+.comment-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+.comment-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+.comment-submit-btn {
+  padding: 10px var(--space-3);
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 0.9.rem;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+.comment-submit-btn:hover {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.comment-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.comment-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  gap: var(--space-2);
+}
+
+.comment-author {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.comment-actions {
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.comment-flag-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+.comment-flag-btn:hover {
+  color: var(--danger);
+  background-color: var(--danger-light);
+}
+.comment-flag-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.comment-delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+.comment-delete-btn:hover {
+  color: var(--danger);
+  background-color: var(--danger-light);
+}
+
+.comment-flagged-badge {
+  display: inline-block;
+  background-color: var(--success-light);
+  color: var(--success);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #b2f2bb;
+}
+
+/* Inline flagged badge shown under comment text */
+.comment-flagged-badge--inline {
+  display: inline-block;
+  background-color: var(--danger-light);
+  color: var(--danger);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--danger);
+  margin-top: 4px;
+}
+
+/* Flagged comment card — subtle red tint */
+.comment-card--flagged {
+  border-color: var(--danger);
+  background-color: var(--danger-light);
+}
+
+/* Guest sign-in prompt in the comments area */
+.comment-signin-prompt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.comment-signin-text {
+  flex: 1;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+/* Sign In button — used in comment prompt and beside each comment */
+.comment-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px var(--space-3);
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+.comment-signin-btn:hover {
+  background-color: var(--accent-hover);
+  color: var(--text-inverse);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Smaller variant used inside the comment action row */
+.comment-signin-btn--sm {
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+}
+
+.placeholder-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+/* ============================================================
+   CREATOR CHANNEL PAGE
+   ============================================================ */
+.channel-container {
+  padding: var(--space-4) var(--space-4) var(--space-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  font-family: var(--font-sans);
+}
+
+/* Banner */
+.channel-banner {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--border) 100%);
+  color: var(--text-inverse);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--accent);
+}
+
+.channel-title {
+  margin: 0 0 var(--space-1) 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: var(--text-inverse);
+  letter-spacing: -0.02em;
+}
+
+.channel-metrics {
+  display: flex;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+  color: var(--bg-page);
+  flex-wrap: wrap;
+}
+
+.channel-metrics span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Pro badge */
+.pro-badge {
+  background-color: var(--warning);
+  color: var(--text-inverse);
+  padding: 2px var(--space-1);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Video catalog grid on channel page */
+.video-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.video-thumbnail-placeholder {
+  aspect-ratio: 16 / 9;
+  background-color: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   MODAL SYSTEM  (Flag Video / Flag Comment)
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(28, 30, 32, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-md);
+  max-width: 480px;
+  width: 90%;
+}
+
+.modal-content h3 {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal-content label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+  box-sizing: border-box;
+}
+
+.modal-content select:focus,
+.modal-content textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+.modal-content textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 10px var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.modal-buttons button[type="submit"] {
+  background-color: var(--accent);
+  color: var(--text-inverse);
+}
+.modal-buttons button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+.modal-buttons button[type="submit"]:disabled {
+  background-color: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.modal-buttons button[type="button"] {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.modal-buttons button[type="button"]:hover {
+  background-color: #e9ecef;
+}
+
+.modal-content .error {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  border: 1px solid #ffc9c9;
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+.admin-panel {
+  padding: var(--space-4) var(--space-4) var(--space-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.admin-panel h2 {
+  margin-bottom: var(--space-4);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Flag card */
+.flag-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-xs);
+}
+
+.flag-header {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.flag-type {
+  display: inline-block;
+  background-color: var(--accent-light);
+  color: var(--accent-text);
+  padding: 3px var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-focus);
+}
+
+.flag-reason {
+  display: inline-block;
+  background-color: var(--danger-light);
+  color: var(--danger);
+  padding: 3px var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid #ffc9c9;
+}
+
+.flag-card p {
+  margin: 6px 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.flag-card p strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.flag-actions {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.btn-resolve,
+.btn-dismiss {
+  padding: 8px var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.btn-resolve {
+  background-color: var(--success);
+  color: var(--text-inverse);
+}
+.btn-resolve:hover {
+  background-color: #27853a;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-dismiss {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-dismiss:hover {
+  background-color: #e9ecef;
+}
+
+/* ============================================================
+   UPLOAD VIDEO PAGE
+   ============================================================ */
+
+/* Page centering wrapper */
+.upload-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--space-5) var(--space-3);
+  min-height: 60vh;
+}
+
+/* Card */
+.upload-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+}
+
+/* Card header band */
+.upload-card-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--bg-subtle);
+}
+
+.upload-card-title {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.upload-card-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Status feedback message */
+.upload-status-msg {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-left: 3px solid;
+}
+
+.upload-status-msg.success {
+  background-color: var(--success-light);
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.upload-status-msg.error {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Form body */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+/* Individual field group */
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label */
+.upload-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.upload-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+/* Text input */
+.upload-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background-color var(--transition);
+  box-sizing: border-box;
+}
+
+.upload-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.upload-input:focus {
+  outline: none;
+  background-color: var(--bg-card);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+/* Textarea */
+.upload-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.55;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background-color var(--transition);
+  box-sizing: border-box;
+}
+
+.upload-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.upload-textarea:focus {
+  outline: none;
+  background-color: var(--bg-card);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+/* ── Custom file picker ────────────────────────────────────── */
+
+/* Hide the native input */
+.upload-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Styled label that acts as the click target */
+.upload-file-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-4) var(--space-3);
+  background-color: var(--bg-subtle);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--transition),
+    background-color var(--transition);
+}
+
+.upload-file-label:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-light);
+}
+
+.upload-file-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.upload-file-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.upload-file-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* When a file is chosen, highlight the border */
+.upload-file-input:focus + .upload-file-label,
+.upload-file-label:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+/* ── Horizontal rule divider ──────────────────────────────── */
+.upload-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ── Premiere toggle row ──────────────────────────────────── */
+.upload-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+.upload-toggle-row:hover {
+  background-color: var(--p-cream);
+  border-color: var(--border);
+}
+
+.upload-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upload-toggle-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.upload-toggle-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Hide native checkbox; keep it keyboard-accessible */
+.upload-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Custom toggle track */
+.upload-checkbox-track {
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  background-color: var(--border);
+  border-radius: 11px;
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color var(--transition);
+}
+
+.upload-checkbox-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--transition);
+}
+
+/* Checked state — move knob right & colour the track */
+.upload-checkbox:checked + .upload-checkbox-track {
+  background-color: var(--accent);
+}
+
+.upload-checkbox:checked + .upload-checkbox-track::after {
+  transform: translateX(18px);
+}
+
+/* Focus ring on track for keyboard nav */
+.upload-checkbox:focus-visible + .upload-checkbox-track {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Animated appearance of the datetime field */
+.upload-premier-field {
+  animation: slideDown 0.18s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Submit button ────────────────────────────────────────── */
+.upload-submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--accent);
+  color: var(--text-inverse);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition);
+  margin-top: var(--space-1);
+}
+
+.upload-submit-btn:hover {
+  background-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-submit-btn:active {
+  transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .upload-card-header,
+  .upload-form {
+    padding: var(--space-3);
+  }
+}
+
+/* ============================================================
+   CATEGORY TREE MAP  /  TRENDING
+   ============================================================ */
+.category-container,
+.trending-container {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.category-container h2,
+.trending-container h2 {
+  margin-bottom: var(--space-4);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   LOGIN / SIGNUP STANDALONE PAGES
+   ============================================================ */
+.login-page-container,
+.signup-page-container {
+  max-width: 420px;
+  margin: var(--space-6) auto;
+  padding: 0 var(--space-3);
+}
+
+.login-card,
+.signup-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: var(--space-2);
+  }
+
+  .nav-context-bar {
+    padding: 0 var(--space-2);
+  }
+
+  .auth-page-wrapper {
+    padding: var(--space-4) var(--space-2);
+    gap: var(--space-3);
+  }
+
+  .auth-box {
+    width: 100%;
+    padding: var(--space-4);
+  }
+
+  .video-detail-container {
+    padding: var(--space-2);
+  }
+
+  .video-feed-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-2);
+  }
+
+  .feed-container {
+    padding: var(--space-2);
+  }
+
+  .channel-container,
+  .admin-panel {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .channel-banner {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .channel-metrics {
+    gap: var(--space-2);
+  }
+
+  .modal-content {
+    padding: var(--space-4);
+  }
+
+  .comment-form {
+    flex-direction: column;
+  }
+
+  .comment-submit-btn {
+    width: 100%;
+  }
+
+  .video-engagement-row,
+  .flex-row-space-between {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+}
