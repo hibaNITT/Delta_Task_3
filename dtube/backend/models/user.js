@@ -11,14 +11,6 @@ const UserSchema = new mongoose.Schema(
     memberships: [{ type: String }], // Array of channel/user IDs joined
     subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Users subscribed to this channel
     strikes: { type: Number, default: 0 },
-    resetPasswordToken: {
-      type: String,
-      default: null,
-    },
-    resetPasswordExpires: {
-      type: Date,
-      default: null,
-    },
 
     authProvider: {
       type: String,
