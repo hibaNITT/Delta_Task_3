@@ -273,6 +273,7 @@ const MainDashboard = () => {
   };
 
   return (
+    // maps the urls to specific components
     <Router>
       <div className="app-container">
         <Navbar />
@@ -282,7 +283,9 @@ const MainDashboard = () => {
           <Link to="/" className="nav-link">
             Home Feed
           </Link>
-          <Link to="/trending" className="nav-link">Trending</Link>
+          <Link to="/trending" className="nav-link">
+            Trending
+          </Link>
           <Link to="/upload" className="nav-link">
             Upload Video
           </Link>

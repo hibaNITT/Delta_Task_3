@@ -17,6 +17,7 @@ exports.signup = async (req, res) => {
     }
 
     // Hash the password - never save plain text
+    // salt- : A random string added to the password before hashing.
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
